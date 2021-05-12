@@ -1,0 +1,2 @@
+Rename folder to database name 
+Then execute shell script to create entity class
