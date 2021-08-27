@@ -1,0 +1,34 @@
+nginx-proxy:
+  image: jwilder/nginx-proxy
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - "/etc/nginx/vhost.d"
+    - "/usr/share/nginx/html"
+    - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    - "nginx_certs:/etc/nginx/certs:rw"
+nginx:
+  build:
+    context: ./docker/nginx/
+    dockerfile: Dockerfile
+  volumes_from:
+    - data
+  environment:
+    VIRTUAL_HOST: www.host1.com
+nginx_2:
+  build:
+    context: ./docker/nginx_2/
+    dockerfile: Dockerfile
+  volumes_from:
+    - data
+  environment:
+    VIRTUAL_HOST: www.host2.com
+apache_1:
+  build:
+    context: ./docker/apache_1/
+    dockerfile: Dockerfile
+  volumes_from:
+    - data
+  environment:
+    VIRTUAL_HOST: www.host3.com
