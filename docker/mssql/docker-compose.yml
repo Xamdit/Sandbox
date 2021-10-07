@@ -1,17 +1,17 @@
 version: "3"
 services:
     db:
-        image: "microsoft/mssql-server-linux"
+        image: "microsoft/mssql-server-linux:2017-latest"
         environment:
-            SA_PASSWORD: ""
+            SA_PASSWORD: "password"
             ACCEPT_EULA: "Y"
 
             mssql:
-    image: 'mcr.microsoft.com/mssql/server'
+    image: 'microsoft/mssql-server-linux:2017-latest'
     ports:
         - '1433:1433'
     environment:
         - ACCEPT_EULA=Y
-        - SA_PASSWORD=KsH2020
+        - SA_PASSWORD=password
     volumes:
         - './drive:/var/opt/mssql'
