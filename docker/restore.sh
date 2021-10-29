@@ -1,1 +1,0 @@
-docker load -i ./dockersimages.tar
