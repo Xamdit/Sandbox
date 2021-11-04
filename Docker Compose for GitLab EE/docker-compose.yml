@@ -1,0 +1,164 @@
+gitlab:
+  image: 'gitlab/gitlab-ee:latest'
+  restart: always
+  hostname: 'gitlab.mycompany.tld'
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'https://gitlab.mycompany.tld'
+      # https://docs.gitlab.com/omnibus/settings/ssl.html
+      letsencrypt['enable'] = true
+      letsencrypt['auto_renew'] = true
+      letsencrypt['contact_emails'] = ['admin@mycompany.tld']
+      registry_external_url 'https://registry.mycompany.tld'
+
+      # https://docs.gitlab.com/omnibus/settings/nginx.html
+      nginx['hsts_max_age'] = 31536000
+      nginx['hsts_include_subdomains'] = false
+
+      # https://docs.gitlab.com/omnibus/settings/database.html#using-a-non-packaged-postgresql-database-management-server
+      postgresql['enable'] = false
+      gitlab_rails['db_adapter'] = 'postgresql'
+      gitlab_rails['db_encoding'] = 'utf8'
+      gitlab_rails['db_host'] = 'my-aurora-cluster-here.rds.amazonaws.com'
+      gitlab_rails['db_port'] = 5432
+      gitlab_rails['db_username'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+      gitlab_rails['db_password'] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+      gitlab_rails['db_database'] = 'gitlabdb'
+
+      # https://docs.gitlab.com/ee/administration/monitoring/prometheus/
+      # https://gitlab.com/gitlab-org/grafana-dashboards/tree/master/omnibus
+      prometheus_monitoring['enable'] = true
+      prometheus['listen_address'] = '0.0.0.0:9090'
+
+      # https://docs.gitlab.com/omnibus/settings/redis.html
+      redis['enable'] = false
+      gitlab_rails['redis_host'] = 'my-redis-cache.cache.amazonaws.com'
+      gitlab_rails['redis_port'] = 6379
+
+      # https://docs.gitlab.com/omnibus/settings/smtp.html
+      gitlab_rails['smtp_enable'] = true
+      gitlab_rails['smtp_address'] = "email-smtp.us-east-1.amazonaws.com"
+      gitlab_rails['smtp_port'] = 587
+      gitlab_rails['smtp_user_name'] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      gitlab_rails['smtp_password'] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      gitlab_rails['smtp_domain'] = "mycompany.tld"
+      gitlab_rails['smtp_authentication'] = "login"
+      gitlab_rails['gitlab_email_from'] = 'gitlab@mycompany.tld'
+      gitlab_rails['gitlab_email_reply_to'] = 'noreply@mycompany.tld'
+
+      # https://docs.gitlab.com/ee/administration/incoming_email.html#omnibus-package-installations
+      gitlab_rails['incoming_email_enabled'] = true
+      gitlab_rails['incoming_email_address'] = "gitlab+%{key}@mycompany.tld"
+      gitlab_rails['incoming_email_email'] = "gitlab@mycompany.tld"
+      gitlab_rails['incoming_email_password'] = "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      gitlab_rails['incoming_email_host'] = "imap.mycompany.tld"
+      gitlab_rails['incoming_email_port'] = 993
+      gitlab_rails['incoming_email_ssl'] = true
+      gitlab_rails['incoming_email_start_tls'] = false
+      gitlab_rails['incoming_email_mailbox_name'] = "inbox"
+      gitlab_rails['incoming_email_idle_timeout'] = 60
+
+      # ElasticSearch isn't configured here anymore. Once configured in UI, make sure:
+      # docker exec -it gitlab-gitlab..... bash
+      # gitlab-rake gitlab:elastic:create_empty_index
+      # gitlab-rake gitlab:elastic:index_repositories_async
+      # gitlab-rake gitlab:elastic:index_repositories_status
+
+      # https://gitlab.com/gitlab-org/omnibus-gitlab/issues/561
+      gitlab_rails['signup_enabled'] = false
+      gitlab_rails['password_authentication_enabled_for_web'] = false
+
+      # https://docs.gitlab.com/ee/integration/saml.html
+      # https://docs.gitlab.com/ee/administration/auth/okta.html
+      gitlab_rails['omniauth_enabled'] = true
+
+      # https://docs.gitlab.com/ee/security/rack_attack.html
+      gitlab_rails['rack_attack_git_basic_auth'] = {
+         'enabled' => true,
+         'ip_whitelist' => ["1.2.3.4","4.5.6.7"],
+         'maxretry' => 10, # Limit the number of Git HTTP authentication attempts per IP
+         'findtime' => 60, # Reset the auth attempt counter per IP after 60 seconds
+         'bantime' => 3600 # Ban an IP for one hour (3600s) after too many auth attempts
+      }
+
+      # https://docs.gitlab.com/ee/workflow/lfs/lfs_administration.html#s3-for-omnibus-installations
+      gitlab_rails['lfs_object_store_enabled'] = true
+      gitlab_rails['lfs_object_store_remote_directory'] = "my-gitlab-lfs"
+      gitlab_rails['lfs_object_store_connection'] = {
+        'provider' => 'AWS',
+        'region' => 'us-east-1',
+        'aws_access_key_id' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        'aws_secret_access_key' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+       }
+
+      # https://docs.gitlab.com/ee/administration/container_registry.html#container-registry-storage-driver
+      registry['storage'] = {
+        's3' => {
+          'accesskey' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+          'secretkey' => 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+          'bucket' => 'my-gitlab-registy',
+          'region' => 'us-east-2'
+        }
+      }
+
+      # https://docs.gitlab.com/omnibus/architecture/registry/README.html#configuring-registry
+      registry['storagedriver_health_enabled'] = false
+
+      # https://docs.gitlab.com/ee/administration/job_artifacts.html#using-object-storage
+      gitlab_rails['artifacts_enabled'] = true
+      gitlab_rails['artifacts_object_store_enabled'] = true
+      gitlab_rails['artifacts_object_store_remote_directory'] = "my-gitlab-artifacts"
+      gitlab_rails['artifacts_object_store_connection'] = {
+        'provider' => 'AWS',
+        'region' => 'us-west-1',
+        'use_iam_profile' => true
+      }
+
+      # https://docs.gitlab.com/ee/raketasks/backup_restore.html#using-amazon-s3
+      gitlab_rails['backup_upload_connection'] = {
+        'provider' => 'AWS',
+        'region' => 'us-east-2',
+        'use_iam_profile' => true
+      }
+      gitlab_rails['backup_upload_remote_directory'] = 'my-gitlab-backup'
+
+      # https://gitlab.com/gitlab-org/gitlab-ce/issues/30473
+      # https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template
+      gitlab_rails['gitlab_default_can_create_group'] = false
+      gitlab_rails['gitlab_username_changing_enabled'] = false
+      # gitlab_rails['gitlab_default_projects_features_issues'] = true
+      # gitlab_rails['gitlab_default_projects_features_merge_requests'] = true
+      # gitlab_rails['gitlab_default_projects_features_wiki'] = true
+      # gitlab_rails['gitlab_default_projects_features_snippets'] = true
+      # gitlab_rails['gitlab_default_projects_features_builds'] = true
+      # gitlab_rails['gitlab_default_projects_features_container_registry'] = true
+
+      # End-Of-GitLab-Config
+  ports:
+    - '80:80'
+    - '443:443'
+    - '22:22'
+  volumes:
+    - '/docker/gitlab/config:/etc/gitlab'
+    - '/docker/gitlab/logs:/var/log/gitlab'
+    - '/docker/gitlab/data:/var/opt/gitlab'
+
+runner:
+  image: gitlab/gitlab-runner:latest
+  restart: always
+  volumes:
+    - '/docker/gitlab/runner:/etc/gitlab-runner'
+    #- /var/run/docker.sock:/var/run/docker.sock
+
+grafana:
+  image: 'grafana/grafana:latest'
+  restart: always
+  environment:
+    - GF_SECURITY_ADMIN_PASSWORD=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  ports:
+    - '3000:3000'
+  links:
+    - gitlab
+  volumes:
+    # sudo mkdir -p /docker/gitlab/grafana; chown 472:472 /docker/gitlab/grafana
+    - '/docker/gitlab/grafana:/var/lib/grafana'
