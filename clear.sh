@@ -1,2 +1,1 @@
-yarn add pm2
-yarn add auto-reload-pm2
+sudo find ./ -name .DS_Store -delete

@@ -30,5 +30,5 @@ services:
       - ./docker/mariadb:/opt/data
     command: --init-file /opt/data/migration.sql
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_ROOT_PASSWORD=password
       - TZ=Asia/Bangkok

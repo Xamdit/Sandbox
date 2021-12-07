@@ -1,0 +1,27 @@
+---
+services:
+  mariadb:
+    command: '--init-file /opt/data/migration.sql'
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Bangkok
+    image: mariadb:latest
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./docker/mariadb:/opt/data
+  nodejs:
+    container_name: nodejs
+    image: node:6.9.5-alpine
+    tty: true
+    volumes:
+      - .:/usr/app
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    tty: true
+version: '2'
