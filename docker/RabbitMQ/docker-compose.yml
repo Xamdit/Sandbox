@@ -1,15 +1,8 @@
-version: '2'
+version: '3'
 
-#### NodeJS Container ####
 services:
-    nodejs:
-        image: node:6.9.5-alpine
-        tty: true
-        volumes:
-            - ".:/usr/app"
-
-#### RabbitMQ Container ####
     rabbitmq:
+        container_name: rabbitmq
         image: rabbitmq:management-alpine
         tty: true
         ports:
