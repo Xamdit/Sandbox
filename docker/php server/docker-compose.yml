@@ -1,6 +1,6 @@
 # Source from https://www.masterzendframework.com/docker-development-environment/
 ---
-version: '2'
+version: '3'
 
 volumes:
   database_data:
@@ -22,10 +22,10 @@ services:
     volumes:
       - ./html:/var/www/html
   mariadb:
-    container_name: database_server
+    container_name: mysql
     image: mariadb:latest
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes:
       - ./docker/mariadb:/opt/data
     command: --init-file /opt/data/migration.sql

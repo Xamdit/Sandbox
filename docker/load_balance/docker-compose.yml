@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  loadbal:
+    container_name: gateway
+    image: haproxy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy
+  appserver1:
+    container_name: server1
+    image: greatapp
+    environment:
+      - SVRID=1
+  appserver2:
+    container_name: server2
+    image: greatapp
+    environment:
+      - SVRID=2
+  appserver3:
+    container_name: server3
+    image: greatapp
+    environment:
+      - SVRID=3
+  appserver4:
+    container_name: server4
+    image: greatapp
+    environment:
+      - SVRID=4

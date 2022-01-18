@@ -2,9 +2,10 @@ version: '2.1'
 
 services:
   mariadb-galera-first:
+    container_name: mariadb_master
     image: 'docker.io/bitnami/mariadb-galera:latest'
     ports:
-      - '3307:3306'
+      - '3306:3306'
       - '4444:4444'
       - '4567:4567'
       - '4568:4568'
@@ -33,9 +34,10 @@ services:
       timeout: 5s
       retries: 6
   mariadb-galera-second:
+    container_name: mariadb_slave
     image: 'docker.io/bitnami/mariadb-galera:latest'
     ports:
-      - '3308:3306'
+      - '3307:3306'
       - '4445:4444'
       - '4569:4567'
       - '4570:4568'
@@ -62,14 +64,14 @@ services:
       retries: 6
     depends_on:
       - mariadb-galera-first
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - 8080:80
-    environment:
-      - PMA_ARBITRARY=1
+  # phpmyadmin:
+  #   image: phpmyadmin
+  #   restart: always
+  #   ports:
+  #     - 8080:80
+  #   environment:
+  #     - PMA_ARBITRARY=1
 
-# volumes:
-#   mariadb_galera_data:
-#     driver: local
+  # volumes:
+  #   mariadb_galera_data:
+  #     driver: local
