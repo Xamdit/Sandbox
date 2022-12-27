@@ -1,0 +1,42 @@
+## gitbucket configuration
+# address to bind the the web port to
+GITBUCKET_WEB_BIND=127.0.0.1
+
+# address ti bind the ssh port to
+GITBUCKET_SSH_BIND=127.0.0.1
+
+# web port
+GITBUCKET_WEB_PORT=8080
+
+# ssh port
+GITBUCKET_SSH_PORT=29418
+
+# gitbucket user id. should be the same as your current user id.
+# use setUserID.sh
+GITBUCKET_USER_ID=9000
+
+# max file size for uploaded files in bytes
+GITBUCKET_MAX_FILE_SIZE=10485760
+
+
+## database configuration
+# mysql root user password
+GITBUCKET_DATABASE_ROOT=83wwX7YMRKnVIsGIxPyPwu9u6SaZ
+
+# database for gibucket
+GITBUCKET_DATABASE_NAME=gitbucket
+
+# database user
+GITBUCKET_DATABASE_USER=gitbucket
+
+# database password
+GITBUCKET_DATABASE_PASSWORD=QzB3htEVYNV5aKd1RLFZi9LcSd2F
+
+
+# Timezone one of /usr/share/zoneinfo
+TZ=Europe/Berlin
+
+
+## compose project name
+# this have to be unique for more then one gitbucket instance per docker host
+COMPOSE_PROJECT_NAME=gitbucket

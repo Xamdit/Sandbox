@@ -1,0 +1,1 @@
+export PATH=$PATH:~/Library/Android/sdk/emulator
