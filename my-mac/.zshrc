@@ -2,36 +2,86 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="parin"
 alias reload="source ~/.zshrc"
 alias c='clear'  
+alias e='exit'
 #nvim
 alias vi="nvim"
 alias vim="nvim"
 alias view="nvim -R"
 alias vimdiff="nvim -d"
+alias zshconfig="nvim ~/.zshrc"
+
+
+alias mono-project="cd ~/Documents/workspace/mono-project/"
+alias mono-libs="cd ~/Documents/workspace/mono-libs/"
+alias mono-system="cd ~/Documents/limbo/mono-system"
+alias limbo="cd ~/Documents/limbo/"
+alias github="cd ~/Documents/github/"
+alias flow="cd ~/Documents/workspace/micro-service/"
+alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
+
+sh /Applications/Navicat\ Premium.app/reset.sh   
 
 #mono-project
 # Create a new project
 newpro() {
-echo 🔥🔥🔥 New Project created 🔥🔥🔥
+ echo 🔥🔥🔥 New Project created 🔥🔥🔥
 }
 
-alias mono-project="cd ~/Documents/workspace/mono-project/"
-alias mono-libs="cd ~/Documents/workspace/mono-libs/"
-alias limbo="cd ~/Documents/limbo/"
-alias flow="cd ~/Documents/workspace/micro-service/"
+fly(){
+  echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
+  git add .
+  git commit -m "update : $1"
+  git push
+  echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
+}
 
-alias source="sudo code ~/.zshrc"
+powerup() {
+  echo 🔥🔥🔥 power-up 🔥🔥🔥
+  rm -r node_modules
+  yarn cache clean
+  yarn install
+  npx sort-package-json & prettier --write "./**/*.{js,ts,tsx,json}"
+  yarn build
+  reload
+  echo 🔥🔥🔥 "already power up" 🔥🔥🔥
+}
+
+go2hell(){
+  echo 🔥🔥🔥 "go to hell" 🔥🔥🔥
+  rm -r node_modules
+  yarn cache clean
+  yarn install
+  npx sort-package-json & prettier --write "./**/*.{js,ts,tsx,json}"
+  yarn build
+  reload
+  echo 🔥🔥🔥 "already power up" 🔥🔥🔥
+}
+
+reorder(){
+  find ./ -name .DS_Store -delete; killall Finder
+}
+
+prettier(){
+  yarn prettier
+  yarn prisma:format
+}
+
+mkfile(){
+  mkdir -p $1
+  touch $1/$2
+}
 
 # Git
 git_current_branch () {
-  local ref
-  ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null) 
-  local ret=$? 
-  if [[ $ret != 0 ]]
-  then
-    [[ $ret == 128 ]] && return
-    ref=$(command git rev-parse --short HEAD 2> /dev/null)  || return
-  fi
-  echo ${ref#refs/heads/}
+ local ref
+ ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null) 
+ local ret=$? 
+ if [[ $ret != 0 ]]
+ then
+ [[ $ret == 128 ]] && return
+ ref=$(command git rev-parse --short HEAD 2> /dev/null)  || return
+ fi
+ echo ${ref#refs/heads/}
 } 
 alias g=git
 alias ga='git add'
@@ -193,3 +243,5 @@ alias yo="yarn outdated"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
  
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
