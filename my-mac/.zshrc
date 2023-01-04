@@ -35,7 +35,7 @@ fly(){
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
 }
 
-sleepnow(){
+sleep(){
   pmset sleepnow
 }
 
