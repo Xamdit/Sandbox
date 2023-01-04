@@ -35,6 +35,11 @@ fly(){
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
 }
 
+sleepnow(){
+  pmset sleepnow
+}
+
+
 powerup() {
   echo 🔥🔥🔥 power-up 🔥🔥🔥
   rm -r node_modules
