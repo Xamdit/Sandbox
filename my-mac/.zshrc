@@ -1,8 +1,22 @@
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="parin"
+
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
+
+
+source ~/.bash_profile
+
+alias mono-project="cd ~/Documents/workspace/mono-project/";
+alias mono-libs="cd ~/Documents/workspace/mono-libs/";
+alias limbo="cd ~/Documents/limbo/";
+alias flow="cd ~/Documents/workspace/micro-service/";
+
+
 alias reload="source ~/.zshrc"
 alias c='clear'  
 alias e='exit'
+alias i='npm i'
 #nvim
 alias vi="nvim"
 alias vim="nvim"
@@ -10,13 +24,13 @@ alias view="nvim -R"
 alias vimdiff="nvim -d"
 alias zshconfig="nvim ~/.zshrc"
 
-
 alias mono-project="cd ~/Documents/workspace/mono-project/"
 alias mono-libs="cd ~/Documents/workspace/mono-libs/"
 alias mono-system="cd ~/Documents/limbo/mono-system"
 alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
 alias flow="cd ~/Documents/workspace/micro-service/"
+
 alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
 
 sh /Applications/Navicat\ Premium.app/reset.sh   
@@ -27,10 +41,20 @@ newpro() {
  echo 🔥🔥🔥 New Project created 🔥🔥🔥
 }
 
+
+run(){
+  if test -f "./package-lock.json"; then
+    rm package-lock.json
+    touch package-lock.json
+  fi
+  npm run $1
+}
+
 fly(){
   echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
+  npm run build:prod
   git add .
-  git commit -m "update : $1"
+  git commit -m "$1"
   git push
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
 }
@@ -54,10 +78,9 @@ powerup() {
 go2hell(){
   echo 🔥🔥🔥 "go to hell" 🔥🔥🔥
   rm -r node_modules
-  yarn cache clean
-  yarn install
+  npm install
   npx sort-package-json & prettier --write "./**/*.{js,ts,tsx,json}"
-  yarn build
+  npm run build
   reload
   echo 🔥🔥🔥 "already power up" 🔥🔥🔥
 }
