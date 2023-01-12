@@ -1,22 +1,38 @@
+clear
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="parin"
 
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
+mycomputer() {
+  # install neovim
+  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
+  tar xzf nvim-macos.tar.gz
+  ./nvim-macos/bin/nvim
+  #install oh-my-zsh
+}
 
+remake() {
+  sudo code ~/.zshrc
+}
+
+backup() {
+  rm /Users/Parin/Documents/GitHub/Sandbox/my-mac/.zshrc
+  mv ~/.zshrc /Users/Parin/Documents/GitHub/Sandbox/my-mac/
+  current_dir=$(pwd)
+  cd /Users/Parin/Documents/GitHub/Sandbox/
+  fly "update : renew zshrc"
+  cd $current_dir
+}
 
 source ~/.bash_profile
 
-alias mono-project="cd ~/Documents/workspace/mono-project/";
-alias mono-libs="cd ~/Documents/workspace/mono-libs/";
-alias limbo="cd ~/Documents/limbo/";
-alias flow="cd ~/Documents/workspace/micro-service/";
-
+alias ..="cd .."
 
 alias reload="source ~/.zshrc"
-alias c='clear'  
+alias c='clear'
 alias e='exit'
-alias i='npm i'
+alias i='pnpm i'
 #nvim
 alias vi="nvim"
 alias vim="nvim"
@@ -29,20 +45,18 @@ alias mono-libs="cd ~/Documents/workspace/mono-libs/"
 alias mono-system="cd ~/Documents/limbo/mono-system"
 alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
-alias flow="cd ~/Documents/workspace/micro-service/"
+alias makesflow="cd ~/Documents/workspace/makesflow/"
 
 alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
 
-sh /Applications/Navicat\ Premium.app/reset.sh   
+sh /Applications/Navicat\ Premium.app/reset.sh
 
-#mono-project
-# Create a new project
-newpro() {
- echo 🔥🔥🔥 New Project created 🔥🔥🔥
+update() {
+  npx ncu -u
+  yarn install
 }
 
-
-run(){
+run() {
   if test -f "./package-lock.json"; then
     rm package-lock.json
     touch package-lock.json
@@ -50,67 +64,81 @@ run(){
   npm run $1
 }
 
-fly(){
+fly() {
   echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
-  npm run build:prod
+  npm run build
   git add .
   git commit -m "$1"
   git push
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
 }
 
-sleep(){
+sleep() {
   pmset sleepnow
 }
 
+install() {
+  if test -f "./package-lock.json"; then
+    rm package-lock.json
+    touch package-lock.json
+  fi
+  if test -f "./yarn.lock"; then
+    rm yarn.lock
+    touch yarn.lock
+  fi
+  yarn cache clean
+  yarn install
+}
 
 powerup() {
   echo 🔥🔥🔥 power-up 🔥🔥🔥
   rm -r node_modules
-  yarn cache clean
-  yarn install
-  npx sort-package-json & prettier --write "./**/*.{js,ts,tsx,json}"
-  yarn build
-  reload
-  echo 🔥🔥🔥 "already power up" 🔥🔥🔥
-}
-
-go2hell(){
-  echo 🔥🔥🔥 "go to hell" 🔥🔥🔥
-  rm -r node_modules
   npm install
-  npx sort-package-json & prettier --write "./**/*.{js,ts,tsx,json}"
+  npx sort-package-json &
+  prettier --write "./**/*.{js,ts,tsx,json}"
   npm run build
   reload
   echo 🔥🔥🔥 "already power up" 🔥🔥🔥
 }
 
-reorder(){
-  find ./ -name .DS_Store -delete; killall Finder
+go2hell() {
+  echo 🔥🔥🔥 "go to hell" 🔥🔥🔥
+  rm -r node_modules
+  npm install
+  npx sort-package-json &
+  prettier --write "./**/*.{js,ts,tsx,json}"
+  npm run build
+  reload
+  echo 🔥🔥🔥 "already power up" 🔥🔥🔥
 }
 
-prettier(){
-  yarn prettier
-  yarn prisma:format
+reorder() {
+  find ./ -name .DS_Store -delete
+  killall Finder
 }
 
-mkfile(){
+prettier() {
+  npx sort-package-json &
+  prettier --write "./**/*.{js,ts,json}"
+  npx prisma format
+}
+
+mkfile() {
   mkdir -p $1
   touch $1/$2
 }
 
 # Git
-git_current_branch () {
- local ref
- ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null) 
- local ret=$? 
- if [[ $ret != 0 ]]
- then
- [[ $ret == 128 ]] && return
- ref=$(command git rev-parse --short HEAD 2> /dev/null)  || return
- fi
- echo ${ref#refs/heads/}
-} 
+git_current_branch() {
+  local ref
+  ref=$(command git symbolic-ref --quiet HEAD 2>/dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return
+    ref=$(command git rev-parse --short HEAD 2>/dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
 alias g=git
 alias ga='git add'
 alias gaa='git add --all'
@@ -235,41 +263,9 @@ alias gupv='git pull --rebase -v'
 alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 alias gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify -m "--wip-- [skip ci]"'
 alias gpfwl='git push --force-with-lease'
-# 
-### Basic Commands 
-alias y="yarn"
-alias yi="yarn init -y" 
-
-### Install And Remove Packages 
-alias ya="yarn add"
-alias yr="yarn remove" 
-
-### Install Packages In Your *devDependencies* 
-alias yad="yarn add -D"
- 
-### Install And Remove Packages Globally 
-alias yga="yarn global add"
-alias ygr="yarn global remove"
- 
-### Upgrades Packages To Their Latest Version 
-alias yu="yarn upgrade"
-alias ygu="yarn global upgrade" 
-
-### Clear The Global Cache 
-alias ycc="yarn cache clean"
- 
-### Runs A Defined Package Script 
-alias yrun="yarn run"
- 
-### List Installed Packages 
-alias yl="yarn list --depth=0"
-alias ygl="yarn global list --depth=0" 
-
-### Checks For Outdated Packages 
-alias yo="yarn outdated" 
+#
 
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
- 
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
