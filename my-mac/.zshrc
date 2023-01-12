@@ -78,8 +78,8 @@ sleep() {
   pmset sleepnow
 }
 
-powerup() {
-  echo 🔥🔥🔥 power-up 🔥🔥🔥
+refresh() {
+  echo 🔥🔥🔥 refresh 🔥🔥🔥
   if test -f "./package-lock.json"; then
     rm package-lock.json
     touch package-lock.json
@@ -93,7 +93,7 @@ powerup() {
   fi
   yarn cache clean
   yarn install
-  echo 🔥🔥🔥 "already power up" 🔥🔥🔥
+  echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
 mono() {
