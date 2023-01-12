@@ -12,7 +12,7 @@ mycomputer() {
   #install oh-my-zsh
 }
 
-remake() {
+config() {
   sudo code ~/.zshrc
 }
 
@@ -29,7 +29,8 @@ source ~/.bash_profile
 
 alias ..="cd .."
 
-alias reload="source ~/.zshrc"
+alias reload="source ~/.zshrc;backup"
+
 alias c='clear'
 alias e='exit'
 alias i='pnpm i'
@@ -66,7 +67,6 @@ run() {
 
 fly() {
   echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
-  npm run build
   git add .
   git commit -m "$1"
   git push
