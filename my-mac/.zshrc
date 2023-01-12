@@ -96,6 +96,10 @@ powerup() {
   echo 🔥🔥🔥 "already power up" 🔥🔥🔥
 }
 
+mono() {
+  code /Users/Parin/Documents/limbo/project.code-workspace
+}
+
 go2hell() {
   echo 🔥🔥🔥 "go to hell" 🔥🔥🔥
   rm -r node_modules
