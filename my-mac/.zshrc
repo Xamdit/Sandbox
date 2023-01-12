@@ -18,7 +18,7 @@ config() {
 
 backup() {
   rm /Users/Parin/Documents/GitHub/Sandbox/my-mac/.zshrc
-  mv ~/.zshrc /Users/Parin/Documents/GitHub/Sandbox/my-mac/
+  cp ~/.zshrc /Users/Parin/Documents/GitHub/Sandbox/my-mac/
   current_dir=$(pwd)
   cd /Users/Parin/Documents/GitHub/Sandbox/
   fly "update : renew zshrc"
