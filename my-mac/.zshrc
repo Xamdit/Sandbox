@@ -1,6 +1,7 @@
 clear
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="parin"
+source ~/.bash_profile
 
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
@@ -17,19 +18,19 @@ config() {
 }
 
 backup() {
-  rm /Users/Parin/Documents/GitHub/Sandbox/my-mac/.zshrc
-  cp ~/.zshrc /Users/Parin/Documents/GitHub/Sandbox/my-mac/
+  rm /Users/Parin/Documents/Github/Sandbox/my-mac/.zshrc
+  cp ~/.zshrc /Users/Parin/Documents/Github/Sandbox/my-mac/
+  rm /Users/Parin/Documents/Github/Sandbox/my-mac/.bash_profile
+  cp ~/.bash_profile /Users/Parin/Documents/Github/Sandbox/my-mac/
   current_dir=$(pwd)
-  cd /Users/Parin/Documents/GitHub/Sandbox/
+  cd /Users/Parin/Documents/Github/Sandbox/
   fly "update : renew zshrc"
   cd $current_dir
 }
 
-source ~/.bash_profile
+alias reload="source ~/.zshrc"
 
 alias ..="cd .."
-
-alias reload="source ~/.zshrc;backup"
 
 alias c='clear'
 alias e='exit'
@@ -46,8 +47,8 @@ alias mono-libs="cd ~/Documents/workspace/mono-libs/"
 alias mono-system="cd ~/Documents/limbo/mono-system"
 alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
-alias makesflow="cd ~/Documents/workspace/makesflow/"
-
+alias makesflow="cd ~/Documents/workspace/makesflow"
+alias ps="docker ps -a"
 alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
 
 sh /Applications/Navicat\ Premium.app/reset.sh
@@ -77,7 +78,8 @@ sleep() {
   pmset sleepnow
 }
 
-install() {
+powerup() {
+  echo 🔥🔥🔥 power-up 🔥🔥🔥
   if test -f "./package-lock.json"; then
     rm package-lock.json
     touch package-lock.json
@@ -86,18 +88,11 @@ install() {
     rm yarn.lock
     touch yarn.lock
   fi
+  if [ -d "./node_modules" ]; then
+    rm -r ./node_modules
+  fi
   yarn cache clean
   yarn install
-}
-
-powerup() {
-  echo 🔥🔥🔥 power-up 🔥🔥🔥
-  rm -r node_modules
-  npm install
-  npx sort-package-json &
-  prettier --write "./**/*.{js,ts,tsx,json}"
-  npm run build
-  reload
   echo 🔥🔥🔥 "already power up" 🔥🔥🔥
 }
 
