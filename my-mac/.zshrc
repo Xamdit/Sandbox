@@ -13,6 +13,10 @@ mycomputer() {
   #install oh-my-zsh
 }
 
+webstorm() {
+  open -a WebStorm $1
+}
+
 config() {
   sudo code ~/.zshrc
 }
@@ -28,11 +32,16 @@ backup() {
   cd $current_dir
 }
 
-alias reload="source ~/.zshrc"
+reload() {
+  source ~/.zshrc
+  service network-manager restart.
+  systemctl restart systemd-hostnamed.
+}
 
 alias ..="cd .."
 
 alias c='clear'
+alias r='reset'
 alias e='exit'
 alias i='pnpm i'
 #nvim
@@ -49,9 +58,13 @@ alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
 alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
+alias up='docker-compose up'
+alias fup="docker-compose up --force-recreate"
 alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
 
 sh /Applications/Navicat\ Premium.app/reset.sh
+
+alias vhost="code /etc/hosts"
 
 update() {
   npx ncu -u
