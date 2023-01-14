@@ -20,6 +20,9 @@ webstorm() {
 config() {
   sudo code ~/.zshrc
 }
+dev() {
+  pnpm run dev
+}
 
 backup() {
   rm /Users/Parin/Documents/Github/Sandbox/my-mac/.zshrc
@@ -60,7 +63,6 @@ alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
 alias fup="docker-compose up --force-recreate"
-# alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
@@ -69,6 +71,10 @@ alias vhost="code /etc/hosts"
 update() {
   npx ncu -u
   yarn install
+}
+lint() {
+  npx sort-package-json
+  npx prettier --write './**/*.{tsx,ts,json}'
 }
 
 run() {
@@ -111,7 +117,7 @@ refresh() {
   fi
 
   yarn cache clean
-  yarn install
+  pnpm install
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
