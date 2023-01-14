@@ -11,6 +11,8 @@ mycomputer() {
   tar xzf nvim-macos.tar.gz
   ./nvim-macos/bin/nvim
   #install oh-my-zsh
+  brew install mkcert
+  
 }
 
 webstorm() {
@@ -103,7 +105,7 @@ sleep() {
 
 refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
-
+  git clean -xdf
   if [ -f "./pnpm-lock.yaml" ]; then
     rm ./pnpm-lock.yaml
   fi
@@ -122,6 +124,20 @@ refresh() {
   yarn cache clean
   yarn install
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
+}
+
+pack() {
+  if [ -d "./public" ]; then
+    rm -r ./public
+  fi
+  if [ -d "./system" ]; then
+    rm -r ./system
+  fi
+  yarn install
+  yarn build
+  mkdir ./public
+  yarn pack
+  mv ./package.tgz ./public
 }
 
 mono() {
