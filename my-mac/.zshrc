@@ -21,7 +21,8 @@ config() {
   sudo code ~/.zshrc
 }
 dev() {
-  pnpm run dev
+  # pnpm run dev
+  yarn dev
 }
 
 backup() {
@@ -39,6 +40,9 @@ reload() {
   source ~/.zshrc
   # service network-manager restart.
   # systemctl restart systemd-hostnamed.
+  if [ -d "./package.json" ]; then
+    refresh
+  fi
 }
 
 alias ..="cd .."
@@ -100,8 +104,8 @@ sleep() {
 refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
 
-  if [ -d "./pnpm-lock.yaml" ]; then
-    rm ./node_modules
+  if [ -f "./pnpm-lock.yaml" ]; then
+    rm ./pnpm-lock.yaml
   fi
 
   if test -f "./package-lock.json"; then
@@ -115,9 +119,8 @@ refresh() {
   if [ -d "./node_modules" ]; then
     rm -r ./node_modules
   fi
-
   yarn cache clean
-  pnpm install
+  yarn install
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
