@@ -34,8 +34,8 @@ backup() {
 
 reload() {
   source ~/.zshrc
-  service network-manager restart.
-  systemctl restart systemd-hostnamed.
+  # service network-manager restart.
+  # systemctl restart systemd-hostnamed.
 }
 
 alias ..="cd .."
@@ -60,7 +60,7 @@ alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
 alias fup="docker-compose up --force-recreate"
-alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
+# alias lint="npx sort-package-json & prettier --write './**/*.{ts,json}'"
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
@@ -93,17 +93,23 @@ sleep() {
 
 refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
+
+  if [ -d "./pnpm-lock.yaml" ]; then
+    rm ./node_modules
+  fi
+
   if test -f "./package-lock.json"; then
     rm package-lock.json
-    touch package-lock.json
   fi
+  touch package-lock.json
   if test -f "./yarn.lock"; then
     rm yarn.lock
-    touch yarn.lock
   fi
+  touch yarn.lock
   if [ -d "./node_modules" ]; then
     rm -r ./node_modules
   fi
+
   yarn cache clean
   yarn install
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
