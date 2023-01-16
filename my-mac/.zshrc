@@ -12,7 +12,7 @@ mycomputer() {
   ./nvim-macos/bin/nvim
   #install oh-my-zsh
   brew install mkcert
-  
+
 }
 
 webstorm() {
@@ -74,6 +74,24 @@ sh /Applications/Navicat\ Premium.app/reset.sh
 
 alias vhost="code /etc/hosts"
 
+# compile() {
+#   dirs=("dist" "node_modules")
+#   for dir in "${dirs[@]}"; do
+#     if [ -d "./$dir" ]; then
+#       rm -r "./$dir"
+#     fi
+#   done
+#   if [ ! -d "./public" ]; then
+#     mkdir ./public
+#   fi
+#   if test -f "./public/package.tgz"; then
+#     rm ./public/package.tgz
+#   fi
+#   yarn install
+#   yarn build
+#   yarn pack --out ./public/package.tgz
+# }
+
 update() {
   npx ncu -u
   yarn install
@@ -105,22 +123,23 @@ sleep() {
 
 refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
-  git clean -xdf
-  if [ -f "./pnpm-lock.yaml" ]; then
-    rm ./pnpm-lock.yaml
-  fi
+  # git clean -xdf
 
-  if test -f "./package-lock.json"; then
-    rm package-lock.json
-  fi
-  touch package-lock.json
-  if test -f "./yarn.lock"; then
-    rm yarn.lock
-  fi
+  files=("./pnpm-lock.yaml" "./package-lock.json" "./yarn.lock")
+  for file in "${files[@]}"; do
+    if [ -f "./$file" ]; then
+      rm "./$file"
+    fi
+  done
+
+  dirs=("dist" "node_modules")
+  for dir in "${dirs[@]}"; do
+    if [ -d "./$dir" ]; then
+      rm -r "./$dir"
+    fi
+  done
+
   touch yarn.lock
-  if [ -d "./node_modules" ]; then
-    rm -r ./node_modules
-  fi
   yarn cache clean
   yarn install
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
