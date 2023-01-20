@@ -331,3 +331,8 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/Parin/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end
