@@ -17,6 +17,22 @@ mycomputer() {
 
 }
 
+login(){
+  curl 'http://1.1.1.1/login' \
+  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' \
+  -H 'Accept-Language: en-US,en;q=0.9' \
+  -H 'Cache-Control: max-age=0' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -H 'Origin: http://1.1.1.1' \
+  -H 'Referer: http://1.1.1.1/login?' \
+  -H 'Upgrade-Insecure-Requests: 1' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.61' \
+  --data-raw 'username=30e27u&password=01ee512989a36dc5ca0617a15399eb75&dst=&popup=true' \
+  --compressed \
+  --insecure
+}
+
 webstorm() {
   open -a WebStorm $1
 }
