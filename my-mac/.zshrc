@@ -12,6 +12,8 @@ mycomputer() {
   ./nvim-macos/bin/nvim
   #install oh-my-zsh
   brew install mkcert
+  brew install prisma
+  brew install --cask prisma-studio
 
 }
 
@@ -125,7 +127,7 @@ refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
   # git clean -xdf
 
-  files=("./pnpm-lock.yaml" "./package-lock.json" "./yarn.lock")
+  files=("./pnpm-lock.yaml" "./package-lock.json" "./yarn.lock" ".pnp.*")
   for file in "${files[@]}"; do
     if [ -f "./$file" ]; then
       rm "./$file"
