@@ -88,6 +88,9 @@ alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
 alias fup="docker-compose up --force-recreate"
+# prisma 
+alias introspect="npx prisma introspect"
+
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
