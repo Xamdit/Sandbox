@@ -151,18 +151,17 @@ refresh() {
   done
 
   # clear yarn package
-  if [ -d "./.yarn" ]; then
-    rm -r "./.yarn"
+  if [ -f ".yarnrc.yml" ]; then
     files=("./pnpm-lock.yaml" "./package-lock.json" "./yarn.lock" ".pnp.*")
     for file in "${files[@]}"; do
       if [ -f "./$file" ]; then
         rm "./$file"
       fi
     done
-    touch yarn.lock
-    yarn cache clean
-    yarn install
   fi
+  touch yarn.lock
+  yarn cache clean
+  yarn install
   # clear pnpm package
   if [ -d "./node_modules" ]; then
     files=("./pnpm-lock.yaml" "./package-lock.json")
@@ -172,9 +171,9 @@ refresh() {
       fi
     done
     rm -r "./node_modules"
-    pnpm install
-  fi
 
+  fi
+  pnpm install
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
