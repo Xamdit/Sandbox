@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+    collabtive:
+        privileged: true
+        volumes:
+            - '/dev/urandom:/dev/urandom'
+            - '/dev/random:/dev/random'
+            - '/dev/null:/dev/null'
+        ports:
+            - '8181:80'
+        image: qnib/collabtive

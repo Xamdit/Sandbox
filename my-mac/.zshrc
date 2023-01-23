@@ -82,24 +82,6 @@ sh /Applications/Navicat\ Premium.app/reset.sh
 
 alias vhost="code /etc/hosts"
 
-# compile() {
-#   dirs=("dist" "node_modules")
-#   for dir in "${dirs[@]}"; do
-#     if [ -d "./$dir" ]; then
-#       rm -r "./$dir"
-#     fi
-#   done
-#   if [ ! -d "./public" ]; then
-#     mkdir ./public
-#   fi
-#   if test -f "./public/package.tgz"; then
-#     rm ./public/package.tgz
-#   fi
-#   yarn install
-#   yarn build
-#   yarn pack --out ./public/package.tgz
-# }
-
 update() {
   npx ncu -u
   yarn install
