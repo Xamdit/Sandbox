@@ -83,6 +83,7 @@ alias mono-libs="cd ~/Documents/workspace/mono-libs/"
 alias mono-system="cd ~/Documents/limbo/mono-system"
 alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
+alias workspace="cd ~/Documents/workspace/"
 alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
