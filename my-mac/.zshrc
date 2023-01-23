@@ -17,20 +17,20 @@ mycomputer() {
 
 }
 
-login(){
+login() {
   curl 'http://1.1.1.1/login' \
-  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' \
-  -H 'Accept-Language: en-US,en;q=0.9' \
-  -H 'Cache-Control: max-age=0' \
-  -H 'Connection: keep-alive' \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H 'Origin: http://1.1.1.1' \
-  -H 'Referer: http://1.1.1.1/login?' \
-  -H 'Upgrade-Insecure-Requests: 1' \
-  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.61' \
-  --data-raw 'username=30e27u&password=01ee512989a36dc5ca0617a15399eb75&dst=&popup=true' \
-  --compressed \
-  --insecure
+    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' \
+    -H 'Accept-Language: en-US,en;q=0.9' \
+    -H 'Cache-Control: max-age=0' \
+    -H 'Connection: keep-alive' \
+    -H 'Content-Type: application/x-www-form-urlencoded' \
+    -H 'Origin: http://1.1.1.1' \
+    -H 'Referer: http://1.1.1.1/login?' \
+    -H 'Upgrade-Insecure-Requests: 1' \
+    -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.61' \
+    --data-raw 'username=30e27u&password=01ee512989a36dc5ca0617a15399eb75&dst=&popup=true' \
+    --compressed \
+    --insecure
 }
 
 webstorm() {
@@ -143,23 +143,38 @@ refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
   # git clean -xdf
 
-  files=("./pnpm-lock.yaml" "./package-lock.json" "./yarn.lock" ".pnp.*")
-  for file in "${files[@]}"; do
-    if [ -f "./$file" ]; then
-      rm "./$file"
-    fi
-  done
-
-  dirs=("dist" "node_modules")
+  dirs=("dist")
   for dir in "${dirs[@]}"; do
     if [ -d "./$dir" ]; then
       rm -r "./$dir"
     fi
   done
 
-  touch yarn.lock
-  yarn cache clean
-  yarn install
+  # clear yarn package
+  if [ -d "./.yarn" ]; then
+    rm -r "./.yarn"
+    files=("./pnpm-lock.yaml" "./package-lock.json" "./yarn.lock" ".pnp.*")
+    for file in "${files[@]}"; do
+      if [ -f "./$file" ]; then
+        rm "./$file"
+      fi
+    done
+    touch yarn.lock
+    yarn cache clean
+    yarn install
+  fi
+  # clear pnpm package
+  if [ -d "./node_modules" ]; then
+    files=("./pnpm-lock.yaml" "./package-lock.json")
+    for file in "${files[@]}"; do
+      if [ -f "./$file" ]; then
+        rm "./$file"
+      fi
+    done
+    rm -r "./node_modules"
+    pnpm install
+  fi
+
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
