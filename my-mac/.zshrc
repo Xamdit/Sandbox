@@ -10,27 +10,14 @@ mycomputer() {
   curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
   tar xzf nvim-macos.tar.gz
   ./nvim-macos/bin/nvim
-  #install oh-my-zsh
+
   brew install mkcert
+  # #install oh-my-zsh
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  # install prisma
   brew install prisma
   brew install --cask prisma-studio
 
-}
-
-login() {
-  curl 'http://1.1.1.1/login' \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' \
-    -H 'Accept-Language: en-US,en;q=0.9' \
-    -H 'Cache-Control: max-age=0' \
-    -H 'Connection: keep-alive' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Origin: http://1.1.1.1' \
-    -H 'Referer: http://1.1.1.1/login?' \
-    -H 'Upgrade-Insecure-Requests: 1' \
-    -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.61' \
-    --data-raw 'username=30e27u&password=01ee512989a36dc5ca0617a15399eb75&dst=&popup=true' \
-    --compressed \
-    --insecure
 }
 
 webstorm() {
@@ -88,9 +75,8 @@ alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
 alias fup="docker-compose up --force-recreate"
-# prisma 
+# prisma
 alias introspect="npx prisma introspect"
-
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
@@ -131,10 +117,19 @@ run() {
   npm run $1
 }
 
-fly() {
+jump() {
   echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
   git add .
   git commit -m "$1"
+  git push
+  git fetch
+  echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
+}
+
+fly() {
+  echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
+  git add .
+  git commit -m "$1" --no-verify
   git push
   git fetch
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
