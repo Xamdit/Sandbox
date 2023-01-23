@@ -136,6 +136,7 @@ fly() {
   git add .
   git commit -m "$1"
   git push
+  git fetch
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
 }
 
