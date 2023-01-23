@@ -195,17 +195,6 @@ mono() {
   code /Users/Parin/Documents/limbo/project.code-workspace
 }
 
-go2hell() {
-  echo 🔥🔥🔥 "go to hell" 🔥🔥🔥
-  rm -r node_modules
-  npm install
-  npx sort-package-json &
-  prettier --write "./**/*.{js,ts,tsx,json}"
-  npm run build
-  reload
-  echo 🔥🔥🔥 "already power up" 🔥🔥🔥
-}
-
 reorder() {
   find ./ -name .DS_Store -delete
   killall Finder
