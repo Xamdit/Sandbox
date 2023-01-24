@@ -100,16 +100,18 @@ run() {
 }
 
 jump() {
-  echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
+  echo 🚀🚀🚀 'jump to repo' 🚀🚀🚀
+  echo 🚀🚀🚀 'with verify check' 🚀🚀🚀
   git add .
   git commit -m "$1"
   git push
   git fetch
-  echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
+  echo 🛰🛰🛰 "I'm move like jagger" 🛰🛰🛰
 }
 
 fly() {
   echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
+  echo 🚀🚀🚀 'without verify check' 🚀🚀🚀
   git add .
   git commit -m "$1" --no-verify
   git push
