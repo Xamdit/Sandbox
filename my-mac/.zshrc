@@ -111,7 +111,7 @@ jump() {
 
 fly() {
   echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
-  echo 🚀🚀🚀 'without verify check' 🚀🚀🚀
+  echo 🚀🚀🚀 'without verify check' 🚀🚀
   git add .
   git commit -m "$1" --no-verify
   git push
