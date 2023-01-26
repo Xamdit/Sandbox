@@ -17,6 +17,8 @@ mycomputer() {
   # install prisma
   brew install prisma
   brew install --cask prisma-studio
+  # openlens
+  brew install --cask openlens
 
 }
 
