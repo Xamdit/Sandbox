@@ -22,18 +22,18 @@ mycomputer() {
 
 }
 
-myadmin(){
+myadmin() {
   code /Users/Parin/Documents/limbo/my-admin
 }
 
-dcleanup(){
-    docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
-    docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+dcleanup() {
+  docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
+  docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
 }
 
-extension(){
+extension() {
   npm install -g yo generator-code
-  
+
 }
 
 webstorm() {
@@ -178,7 +178,7 @@ refresh() {
     rm -r "./node_modules"
     pnpm install
   fi
-  
+
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
