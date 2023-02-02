@@ -109,7 +109,7 @@ update() {
 }
 lint() {
   npx sort-package-json
-  npx prettier --write './**/*.{tsx,ts,json}'
+  npx prettier --write './**/*.{ts,json}'
 }
 
 run() {
@@ -138,6 +138,13 @@ fly() {
   git push
   git fetch
   echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
+}
+
+save() {
+  git add .
+  git commit -m "save point"--no-verify
+  git push
+  git fetch
 }
 
 sleep() {
