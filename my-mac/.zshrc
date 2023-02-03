@@ -22,6 +22,12 @@ mycomputer() {
 
 }
 
+plandict() {
+  echo 'password : f478fb75b477'
+  ssh root@95.111.195.20
+  # f478fb75b477
+}
+
 myadmin() {
   code /Users/Parin/Documents/limbo/my-admin
 }
