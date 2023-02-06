@@ -103,7 +103,10 @@ alias ps="docker ps -a"
 alias up='docker-compose up'
 alias fup="docker-compose up --force-recreate"
 # prisma
-alias introspect="npx prisma introspect"
+alias introspect="npx --yes prisma introspect"
+alias generate="npx --yes prisma generate"
+alias studio="npx --yes prisma studio"
+alias migrate="npx --yes prisma migrate dev"
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
@@ -147,9 +150,7 @@ fly() {
 }
 
 save() {
-  git add .
-  git commit -m "save point"--no-verify
-  git push
+  fly "save"
   git fetch
 }
 
