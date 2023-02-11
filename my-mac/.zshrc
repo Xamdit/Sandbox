@@ -80,6 +80,7 @@ reload() {
 }
 
 alias ..="cd .."
+alias hosts="code /etc/hosts"
 
 alias c='clear'
 alias r='reset'
@@ -111,6 +112,15 @@ alias migrate="npx --yes prisma migrate dev"
 sh /Applications/Navicat\ Premium.app/reset.sh
 
 alias vhost="code /etc/hosts"
+
+redocker() {
+  docker stop $(docker ps -a -q)
+  docker rm $(docker ps -a -q)
+  docker rmi $(docker images -q)
+  docker volume rm $(docker volume ls -q)
+  docker network rm $(docker network ls -q)
+  docker-compose up
+}
 
 update() {
   npx ncu -u
@@ -177,10 +187,11 @@ refresh() {
         rm "./$file"
       fi
     done
+    touch yarn.lock
+    yarn cache clean
+    yarn install
   fi
-  touch yarn.lock
-  yarn cache clean
-  yarn install
+
   # clear pnpm package
   if [ -d "./node_modules" ]; then
     files=("./pnpm-lock.yaml" "./package-lock.json")
