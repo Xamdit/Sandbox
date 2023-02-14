@@ -163,6 +163,11 @@ save() {
   fly "save"
   git fetch
 }
+load() {
+  git reset --hard HEAD
+  git pull --rebase
+  git fetch
+}
 
 sleep() {
   pmset sleepnow
