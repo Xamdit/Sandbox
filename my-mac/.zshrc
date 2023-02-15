@@ -19,6 +19,14 @@ mycomputer() {
   brew install --cask prisma-studio
   # openlens
   brew install --cask openlens
+}
+
+tsproject() {
+  args=("$@")
+  for arg in "${args[@]}"; do
+    :
+    npx typescript-express-starter ${arg}
+  done
 
 }
 
