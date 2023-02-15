@@ -25,11 +25,10 @@ mycomputer() {
 plandict() {
   echo 'password : f478fb75b477'
   ssh root@95.111.195.20
-  # f478fb75b477
 }
 
 myadmin() {
-  code /Users/Parin/Documents/limbo/my-admin
+  code ~/Documents/limbo/my-admin
 }
 
 dcleanup() {
@@ -60,12 +59,12 @@ pm2reset() {
 }
 
 backup() {
-  rm /Users/Parin/Documents/Github/Sandbox/my-mac/.zshrc
-  cp ~/.zshrc /Users/Parin/Documents/Github/Sandbox/my-mac/
-  rm /Users/Parin/Documents/Github/Sandbox/my-mac/.bash_profile
-  cp ~/.bash_profile /Users/Parin/Documents/Github/Sandbox/my-mac/
+  rm ~/Documents/Github/Sandbox/my-mac/.zshrc
+  cp ~/.zshrc ~/Documents/Github/Sandbox/my-mac/
+  rm ~/Documents/Github/Sandbox/my-mac/.bash_profile
+  cp ~/.bash_profile ~/Documents/Github/Sandbox/my-mac/
   current_dir=$(pwd)
-  cd /Users/Parin/Documents/Github/Sandbox/
+  cd ~/Documents/Github/Sandbox/
   fly "update : renew zshrc"
   cd $current_dir
 }
@@ -227,7 +226,7 @@ pack() {
 }
 
 mono() {
-  code /Users/Parin/Documents/limbo/project.code-workspace
+  code ~/Documents/limbo/project.code-workspace
 }
 
 reorder() {
@@ -389,6 +388,6 @@ source $ZSH/oh-my-zsh.sh
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/Users/Parin/Library/pnpm"
+export PNPM_HOME="~/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
