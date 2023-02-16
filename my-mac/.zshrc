@@ -29,6 +29,16 @@ tsproject() {
   done
 
 }
+mono-service() {
+  args=("$@")
+  for arg in "${args[@]}"; do
+    :
+    git clone https://codelanding@gitlab.com/mono-product/mono-template.git ${arg}
+    cd ${arg}
+    rm -rf .git
+    cd ..
+  done
+}
 
 plandict() {
   echo 'password : f478fb75b477'
@@ -167,7 +177,9 @@ fly() {
 }
 
 save() {
-  fly "save"
+  git add .
+  git commit -m "$1"
+  git push
   git fetch
 }
 load() {
