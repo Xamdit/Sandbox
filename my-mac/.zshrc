@@ -19,16 +19,17 @@ mycomputer() {
   brew install --cask prisma-studio
   # openlens
   brew install --cask openlens
+  pnpm install --no-store
 }
 
 tsproject() {
   args=("$@")
   for arg in "${args[@]}"; do
-    :
+    
     npx typescript-express-starter ${arg}
   done
-
 }
+
 mono-service() {
   args=("$@")
   for arg in "${args[@]}"; do
@@ -125,6 +126,16 @@ alias introspect="npx --yes prisma introspect"
 alias generate="npx --yes prisma generate"
 alias studio="npx --yes prisma studio"
 alias migrate="npx --yes prisma migrate dev"
+pa(){
+  yarn cache clean
+  yarn install
+  rm -r ./prisma/client
+  cat prisma/schema/**.prisma > prisma/schema.prisma
+  npx --yes prisma format
+  yarn pnpify prisma generate --schema prisma/schema.prisma
+  npx --yes prisma migrate dev --name init --schema prisma/schema.prisma
+}
+
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
