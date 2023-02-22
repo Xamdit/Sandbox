@@ -22,6 +22,11 @@ mycomputer() {
   pnpm install --no-store
 }
 
+run(){
+  dotnet watch run
+}
+
+
 tsproject() {
   args=("$@")
   for arg in "${args[@]}"; do
@@ -40,6 +45,9 @@ mono-service() {
     cd ..
   done
 }
+
+
+
 
 plandict() {
   echo 'password : f478fb75b477'
@@ -69,7 +77,7 @@ config() {
 }
 dev() {
   # pnpm run dev
-  yarn dev
+  yarn dev -p 80
 }
 
 pm2reset() {
@@ -126,7 +134,11 @@ alias introspect="npx --yes prisma introspect"
 alias generate="npx --yes prisma generate"
 alias studio="npx --yes prisma studio"
 alias migrate="npx --yes prisma migrate dev"
-pa(){
+
+reup(){
+  rm yarn.lock
+  touch yarn.lock
+  rm .pnp.*
   yarn cache clean
   yarn install
   rm -r ./prisma/client
