@@ -71,6 +71,7 @@ extension() {
 webstorm() {
   open -a WebStorm $1
 }
+alias w='webstorm'
 
 config() {
   sudo code ~/.zshrc
@@ -80,9 +81,8 @@ dev() {
   yarn dev -p 80
 }
 
-pm2reset() {
-  pm2 kill
-  pm2 resurrect
+pm2(){
+  yarn pm2
 }
 
 backup() {
@@ -107,6 +107,7 @@ reload() {
 
 alias ..="cd .."
 alias hosts="code /etc/hosts"
+
 
 alias c='clear'
 alias r='reset'
