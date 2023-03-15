@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  argo-server:
+    image: argoproj/argocli:v3.3.0
+    command: server
+    ports:
+      - "2746:2746"
+    volumes:
+      - ./workflow-templates:/workflow-templates
+      - ./workflows:/workflows
+
+  argo-ui:
+    image: argoproj/argo-ui:v3.3.0
+    ports:
+      - "8001:8001"

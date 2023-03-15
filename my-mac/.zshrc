@@ -73,6 +73,11 @@ webstorm() {
 }
 alias w='webstorm'
 
+rider() {
+  open -a Rider $1
+}
+alias r='rider'
+
 config() {
   sudo code ~/.zshrc
 }
@@ -135,6 +140,18 @@ alias introspect="npx --yes prisma introspect"
 alias generate="npx --yes prisma generate"
 alias studio="npx --yes prisma studio"
 alias migrate="npx --yes prisma migrate dev"
+
+ 
+boom(){
+  # sudo rm -r ~/Documents/limbo/
+  # sudo rm -r ~/Documents/GitHub/ 
+  # sudo rm -r ~/Documents/gi/
+  # sudo rm -r /Applications/Navicat\ Premium.app/reset.sh
+  # backup
+  # mv ~/.zshrc_bak ~/.zshrc
+  echo boom
+
+}
 
 reup(){
   rm yarn.lock
@@ -255,20 +272,6 @@ refresh() {
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
-pack() {
-  if [ -d "./public" ]; then
-    rm -r ./public
-  fi
-  if [ -d "./system" ]; then
-    rm -r ./system
-  fi
-  yarn install
-  yarn build
-  mkdir ./public
-  yarn pack
-  mv ./package.tgz ./public
-}
-
 mono() {
   code ~/Documents/limbo/project.code-workspace
 }
@@ -277,6 +280,12 @@ reorder() {
   find ./ -name .DS_Store -delete
   killall Finder
 }
+
+kill-port() {
+  lsof -i :$1
+  kill $(lsof -t -i :$1)
+}
+
 
 prettier() {
   npx sort-package-json &
