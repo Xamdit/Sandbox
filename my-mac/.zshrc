@@ -64,6 +64,10 @@ extension() {
 
 }
 
+cmd(){
+  sh command.sh $1
+}
+
 webstorm() {
   open -a WebStorm $1
 }
@@ -256,6 +260,7 @@ mono() {
 reorder() {
   find ./ -name .DS_Store -delete
   killall Finder
+  find . -type d -empty -delete 
 }
 
 kill-port() {
