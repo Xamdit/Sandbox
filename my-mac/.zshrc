@@ -100,6 +100,7 @@ backup() {
   cd ~/Documents/Github/Sandbox/
   fly "update : renew zshrc"
   cd $current_dir
+  reload
 }
 
 reload() {
