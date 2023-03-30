@@ -5,23 +5,6 @@ source ~/.bash_profile
 
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
-mycomputer() {
-  # install neovim
-  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
-  tar xzf nvim-macos.tar.gz
-  ./nvim-macos/bin/nvim
-
-  brew install mkcert
-  # #install oh-my-zsh
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  # install prisma
-  brew install prisma
-  brew install --cask prisma-studio
-  # openlens
-  brew install --cask openlens
-  pnpm install --no-store
-}
-
 run() {
   dotnet watch run
 }
@@ -29,19 +12,7 @@ run() {
 tsproject() {
   args=("$@")
   for arg in "${args[@]}"; do
-
     npx typescript-express-starter ${arg}
-  done
-}
-
-mono-service() {
-  args=("$@")
-  for arg in "${args[@]}"; do
-    :
-    git clone https://codelanding@gitlab.com/mono-product/mono-template.git ${arg}
-    cd ${arg}
-    rm -rf .git
-    cd ..
   done
 }
 
@@ -51,8 +22,7 @@ plandict() {
 }
 
 submodule() {
-  git submodule update --init --recursive
-  git fetch --recurse-submodules
+
 }
 
 dcleanup() {
@@ -62,33 +32,16 @@ dcleanup() {
 
 extension() {
   npm install -g yo generator-code
-
 }
 
 cmd() {
   sh command.sh $1
 }
 
-webstorm() {
-  open -a WebStorm $1
-}
-alias w='webstorm'
-
-rider() {
-  open -a Rider $1
-}
 alias r='rider'
 
 config() {
   sudo code ~/.zshrc
-}
-dev() {
-  # pnpm run dev
-  yarn dev -p 80
-}
-
-pm2() {
-  yarn pm2
 }
 
 backup() {
@@ -138,13 +91,12 @@ alias up='docker-compose up'
 
 alias fup='docker-compose down;docker-compose up'
 
-boom() {
-  # sudo rm -r ~/Documents/limbo/
-  # sudo rm -r ~/Documents/GitHub/
-  # sudo rm -r ~/Documents/gi/
-  # sudo rm -r /Applications/Navicat\ Premium.app/reset.sh
-  # backup
-  # mv ~/.zshrc_bak ~/.zshrc
+booom() {
+  backup
+  sudo rm -r ~/Documents/limbo/
+  sudo rm -r ~/Documents/GitHub/
+  sudo rm -r ~/Documents/git/
+  sudo rm -r /Applications/Navicat\ Premium.app/reset.sh
   echo boom
 
 }
@@ -219,6 +171,18 @@ update() {
   git commit -m "update : $1"
   git push
   git fetch
+}
+
+module() {
+  current_dir=$(pwd)
+  DIR=./libs
+  for dir in $(find $DIR -mindepth 1 -maxdepth 1 -type d); do
+    cd $dir
+    [ "$1" = "pull" ] && git fetch && git reset --hard HEAD && git pull origin main
+    [ "$1" = "push" ] && git add . && git commit -m "Update submodule" && git push
+    [ "$1" = "update" ] && git submodule update --init --recursive && git fetch --recurse-submodules
+    cd $current_dir
+  done
 }
 
 fixed() {
