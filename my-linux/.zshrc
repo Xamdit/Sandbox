@@ -54,7 +54,9 @@ submodule(){
   git submodule update --init --recursive
   git fetch --recurse-submodules 
 }
- 
+
+
+
 dcleanup() {
   docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
   docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
@@ -161,14 +163,11 @@ redocker() {
   docker network rm $(docker network ls -q)
   docker-compose up
 }
-# sp stand for save point
-sp(){
-  git add .
-  git commit -m "temp : checkpoint"
-  git push
-  git fetch
-}
 
+update() {
+  npx ncu -u
+  yarn install
+}
 lint() {
   npx sort-package-json
   npx prettier --write './**/*.{ts,json}'
@@ -211,20 +210,6 @@ save() {
 load() {
   git reset --hard HEAD
   git pull --rebase
-  git fetch
-}
-
-update() {
-  git add .
-  git commit -m "update : $1"
-  git push
-  git fetch
-}
-
-fixed() {
-  git add .
-  git commit -m "fixed : $1"
-  git push
   git fetch
 }
 
@@ -422,7 +407,6 @@ git_current_branch() {
   fi
   echo ${ref#refs/heads/}
 }
- 
 #
 
 plugins=(git)

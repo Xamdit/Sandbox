@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  wetty:
+    image: hikariai/wetty:latest
+    build:
+      context: .
+      dockerfile: containers/wetty/Dockerfile
+    tty: true
+    working_dir: /usr/src/app
+
+  neovim-server:
+    image: hikariai/nvim-server:latest
+    build:
+      context: .
+      dockerfile: containers/nvim-server/Dockerfile
+    tty: true
+    working_dir: /workspace
+    ports:
+      - "6080:3000"
+      - "8090:8090"
+    environment:
+      - USER=guest
+      - SECRET=password
+      - TZ=Asia/Shanghai
+    volumes:
+      - $HOME/workspace:/workspace
+      - /appdata/nvim-server:/config
+    restart: unless-stopped
