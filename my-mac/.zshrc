@@ -50,11 +50,11 @@ plandict() {
   ssh root@95.111.195.20
 }
 
-submodule(){
+submodule() {
   git submodule update --init --recursive
-  git fetch --recurse-submodules 
+  git fetch --recurse-submodules
 }
- 
+
 dcleanup() {
   docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
   docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
@@ -65,7 +65,7 @@ extension() {
 
 }
 
-cmd(){
+cmd() {
   sh command.sh $1
 }
 
@@ -136,7 +136,7 @@ alias ps="docker ps -a"
 alias up='docker-compose up'
 
 alias fup='docker-compose down;docker-compose up'
-  
+
 boom() {
   # sudo rm -r ~/Documents/limbo/
   # sudo rm -r ~/Documents/GitHub/
@@ -147,7 +147,6 @@ boom() {
   echo boom
 
 }
-
 
 sh /Applications/Navicat\ Premium.app/reset.sh
 
@@ -162,7 +161,7 @@ redocker() {
   docker-compose up
 }
 # sp stand for save point
-sp(){
+sp() {
   git add .
   git commit -m "temp : checkpoint"
   git push
@@ -278,7 +277,7 @@ mono() {
 reorder() {
   find ./ -name .DS_Store -delete
   killall Finder
-  find . -type d -empty -delete 
+  find . -type d -empty -delete
 }
 
 kill-port() {
@@ -422,7 +421,7 @@ git_current_branch() {
   fi
   echo ${ref#refs/heads/}
 }
- 
+
 #
 
 plugins=(git)
