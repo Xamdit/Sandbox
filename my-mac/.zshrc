@@ -5,10 +5,6 @@ source ~/.bash_profile
 
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
-run() {
-  dotnet watch run
-}
-
 tsproject() {
   args=("$@")
   for arg in "${args[@]}"; do
@@ -71,7 +67,6 @@ alias hosts="code /etc/hosts"
 alias c='clear'
 alias r='reset'
 alias e='exit'
-alias i='pnpm i'
 #nvim
 alias vi="nvim"
 alias vim="nvim"
@@ -79,16 +74,12 @@ alias view="nvim -R"
 alias vimdiff="nvim -d"
 alias zshconfig="nvim ~/.zshrc"
 
-alias mono-project="cd ~/Documents/workspace/mono-project/"
-alias mono-libs="cd ~/Documents/workspace/mono-libs/"
-alias mono-system="cd ~/Documents/limbo/mono-system"
 alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
 alias workspace="cd ~/Documents/workspace/"
 alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
-
 alias fup='docker-compose down;docker-compose up'
 
 booom() {
@@ -100,8 +91,9 @@ booom() {
   echo boom
 
 }
-
-sh /Applications/Navicat\ Premium.app/reset.sh
+rider() {
+  cat /Applications/Rider.app/key.txt
+}
 
 alias vhost="code /etc/hosts"
 
@@ -246,12 +238,6 @@ reorder() {
 }
 
 kill-port() {
-  #!/bin/bash
-
-  # killport - Kill a process using a specific port
-  # Usage: killport <port> [-f|--force] [-u|--udp]
-  # Example: killport 3000
-  # Author: https://github.com/BalliAsghar
 
   # Colors
   RED='\033[0;31m'
