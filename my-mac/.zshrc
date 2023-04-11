@@ -17,10 +17,6 @@ plandict() {
   ssh root@95.111.195.20
 }
 
-submodule() {
-
-}
-
 dcleanup() {
   docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
   docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
@@ -126,6 +122,10 @@ run() {
   npm run $1
 }
 
+test() {
+  sh test.sh
+}
+
 jump() {
   echo 🚀🚀🚀 'jump to repo' 🚀🚀🚀
   echo 🚀🚀🚀 'with verify check' 🚀🚀🚀
@@ -170,11 +170,19 @@ module() {
   DIR=./libs
   for dir in $(find $DIR -mindepth 1 -maxdepth 1 -type d); do
     cd $dir
-    [ "$1" = "pull" ] && git fetch && git reset --hard HEAD && git pull origin main
+    [ "$1" = "pull" ] && git fetch && git reset --hard HEAD && git pull origin $2
     [ "$1" = "push" ] && git add . && git commit -m "Update submodule" && git push
     [ "$1" = "update" ] && git submodule update --init --recursive && git fetch --recurse-submodules
+    [ "$1" = "rebase" ] && git reset --hard HEAD && git pull --rebase origin main
     cd $current_dir
   done
+}
+
+merged(){
+  git add .
+  git commit -m "update : merged from $1"
+  git push
+  git fetch
 }
 
 fixed() {
@@ -237,7 +245,7 @@ reorder() {
   find . -type d -empty -delete
 }
 
-kill-port() {
+kill() {
 
   # Colors
   RED='\033[0;31m'
