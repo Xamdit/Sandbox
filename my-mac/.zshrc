@@ -49,9 +49,12 @@ backup() {
 }
 
 cdesk() {
+  current_dir=$(pwd)
+  cd ~/Desktop
   rm *.png
   rm *.mov
   reorder
+  cd $current_dir
 }
 
 
