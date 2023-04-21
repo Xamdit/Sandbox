@@ -48,6 +48,14 @@ backup() {
   reload
 }
 
+cdesk() {
+  rm *.png
+  rm *.mov
+  reorder
+}
+
+
+
 reload() {
   source ~/.zshrc
   # service network-manager restart.
@@ -76,7 +84,12 @@ alias workspace="cd ~/Documents/workspace/"
 alias makesflow="cd ~/Documents/workspace/makesflow"
 alias ps="docker ps -a"
 alias up='docker-compose up'
-alias fup='docker-compose down;docker-compose up'
+# alias fup='docker-compose down;docker-compose up'
+fup() {
+  docker-compose down
+  docker image prune
+  docker-compose up -d
+}
 
 booom() {
   backup
@@ -178,7 +191,7 @@ module() {
   done
 }
 
-merged(){
+merged() {
   git add .
   git commit -m "update : merged from $1"
   git push
