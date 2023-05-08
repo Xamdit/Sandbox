@@ -211,6 +211,10 @@ sleep() {
   pmset sleepnow
 }
 
+restart(){
+  osascript -e 'tell application "System Events" to set quitapps to name of every application process whose visible is true and name is not "Finder"' -e 'repeat with closeall in quitapps' -e 'quit application closeall' -e 'end repeat'
+}
+
 refresh() {
   echo 🔥🔥🔥 refresh 🔥🔥🔥
   # git clean -xdf
@@ -395,6 +399,7 @@ git_current_branch() {
   fi
   echo ${ref#refs/heads/}
 }
+
 
 
 dropbox(){
