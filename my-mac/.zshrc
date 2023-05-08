@@ -4,6 +4,7 @@ ZSH_THEME="parin"
 source ~/.bash_profile
 
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export DOTNET_ROOT=/usr/local/Cellar/dotnet/7.0.100/libexec
 
 tsproject() {
   args=("$@")
@@ -56,8 +57,6 @@ cdesk() {
   reorder
   cd $current_dir
 }
-
-
 
 reload() {
   source ~/.zshrc
@@ -395,6 +394,11 @@ git_current_branch() {
     ref=$(command git rev-parse --short HEAD 2>/dev/null) || return
   fi
   echo ${ref#refs/heads/}
+}
+
+
+dropbox(){
+  cd ~/Dropbox
 }
 
 #
