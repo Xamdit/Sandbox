@@ -84,6 +84,7 @@ alias limbo="cd ~/Documents/limbo/"
 alias github="cd ~/Documents/github/"
 alias workspace="cd ~/Documents/workspace/"
 alias makesflow="cd ~/Documents/workspace/makesflow"
+alias siamraj="cd ~/Documents/workspace/siamraj"
 alias ps="docker ps -a"
 alias up='docker-compose up'
 # alias fup='docker-compose down;docker-compose up'
