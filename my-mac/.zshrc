@@ -212,7 +212,7 @@ sleep() {
   pmset sleepnow
 }
 
-restart(){
+restart() {
   osascript -e 'tell application "System Events" to set quitapps to name of every application process whose visible is true and name is not "Finder"' -e 'repeat with closeall in quitapps' -e 'quit application closeall' -e 'end repeat'
 }
 
@@ -401,9 +401,24 @@ git_current_branch() {
   echo ${ref#refs/heads/}
 }
 
+pullall() {
+  current_dir=$(pwd)
+  # for file in "$1"/*; do
+  for file in "."/*; do
+    if [ -d "$file" ]; then
+      echo "$file"
+      cd $file
+      # git pull origin main
+      git reset --hard HEAD
+      git pull --rebase
+      # cd $current_dir
+      cd ..
+      # pullall "$file"
+    fi
+  done
+}
 
-
-dropbox(){
+dropbox() {
   cd ~/Dropbox
 }
 
