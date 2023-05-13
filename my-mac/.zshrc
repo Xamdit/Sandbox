@@ -62,7 +62,7 @@ reload() {
   source ~/.zshrc
   # service network-manager restart.
   # systemctl restart systemd-hostnamed.
-  if [ -d "./package.json" ]; then
+  if [ -f "./package.json" ]; then
     refresh
   fi
 }
@@ -194,6 +194,22 @@ module() {
   done
 }
 
+relibs() {
+  modules=(
+    "underscore git@gitlab.com:mono-libs/underscore.git"
+    "webapi git@gitlab.com:mono-product/service-core.git"
+  )
+
+  for module in "${modules[@]}"; do
+    name=${module%% *}
+    url=${module#* }
+
+    git submodule deinit "./libs/$name"
+    git rm -r "./libs/$name"
+    git submodule add "$url" "./libs/$name"
+  done
+}
+
 merged() {
   git add .
   git commit -m "update : merged from $1"
@@ -264,6 +280,7 @@ reorder() {
   killall Finder
   find . -type d -empty -delete
 }
+# find ./ -name "._*" -type f -delete
 
 kill() {
 
@@ -403,17 +420,12 @@ git_current_branch() {
 
 pullall() {
   current_dir=$(pwd)
-  # for file in "$1"/*; do
   for file in "."/*; do
     if [ -d "$file" ]; then
-      echo "$file"
       cd $file
-      # git pull origin main
       git reset --hard HEAD
       git pull --rebase
-      # cd $current_dir
       cd ..
-      # pullall "$file"
     fi
   done
 }
