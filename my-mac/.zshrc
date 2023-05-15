@@ -6,13 +6,6 @@ source ~/.bash_profile
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export DOTNET_ROOT=/usr/local/Cellar/dotnet/7.0.100/libexec
 
-tsproject() {
-  args=("$@")
-  for arg in "${args[@]}"; do
-    npx typescript-express-starter ${arg}
-  done
-}
-
 plandict() {
   echo 'password : f478fb75b477'
   ssh root@95.111.195.20
@@ -23,15 +16,9 @@ dcleanup() {
   docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
 }
 
-extension() {
-  npm install -g yo generator-code
-}
-
 cmd() {
   sh command.sh $1
 }
-
-alias r='rider'
 
 config() {
   sudo code ~/.zshrc
@@ -52,10 +39,10 @@ backup() {
 cdesk() {
   current_dir=$(pwd)
   cd ~/Desktop
-  rm *.png
-  rm *.mov
+  [ -f "*.png" ] && rm *.png
+  [ -f "*.mov" ] && rm *.mov
   reorder
-  cd $current_dir
+  cd "$current_dir"
 }
 
 reload() {
@@ -175,10 +162,7 @@ load() {
 }
 
 update() {
-  git add .
-  git commit -m "update : $1"
-  git push
-  git fetch
+  sh update.sh
 }
 
 module() {
