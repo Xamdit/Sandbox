@@ -39,8 +39,7 @@ backup() {
 cdesk() {
   current_dir=$(pwd)
   cd ~/Desktop
-  [ -f "*.png" ] && rm *.png
-  [ -f "*.mov" ] && rm *.mov
+  rm -f *.png *.mov
   reorder
   cd "$current_dir"
 }
@@ -49,9 +48,6 @@ reload() {
   source ~/.zshrc
   # service network-manager restart.
   # systemctl restart systemd-hostnamed.
-  if [ -f "./package.json" ]; then
-    refresh
-  fi
 }
 
 alias ..="cd .."
@@ -112,41 +108,8 @@ sp() {
   git fetch
 }
 
-lint() {
-  npx sort-package-json
-  npx prettier --write './**/*.{ts,json}'
-}
-
-run() {
-  if test -f "./package-lock.json"; then
-    rm package-lock.json
-    touch package-lock.json
-  fi
-  npm run $1
-}
-
 test() {
   sh test.sh
-}
-
-jump() {
-  echo 🚀🚀🚀 'jump to repo' 🚀🚀🚀
-  echo 🚀🚀🚀 'with verify check' 🚀🚀🚀
-  git add .
-  git commit -m "$1"
-  git push
-  git fetch
-  echo 🛰🛰🛰 "I'm move like jagger" 🛰🛰🛰
-}
-
-fly() {
-  echo 🚀🚀🚀 'quick push to repo' 🚀🚀🚀
-  echo 🚀🚀🚀 'without verify check' 🚀🚀
-  git add .
-  git commit -m "$1" --no-verify
-  git push
-  git fetch
-  echo 🛰🛰🛰 "I'm in the sky" 🛰🛰🛰
 }
 
 save() {
@@ -255,19 +218,13 @@ refresh() {
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
-mono() {
-  code ~/Documents/limbo/project.code-workspace
-}
-
 reorder() {
   find ./ -name .DS_Store -delete
   killall Finder
   find . -type d -empty -delete
 }
 # find ./ -name "._*" -type f -delete
-
 kill() {
-
   # Colors
   RED='\033[0;31m'
   GREEN='\033[0;32m'
@@ -379,17 +336,6 @@ kill() {
   echo -e "${GREEN}Done${NC}"
 }
 
-prettier() {
-  npx sort-package-json &
-  prettier --write "./**/*.{js,ts,json}"
-  npx prisma format
-}
-
-mkfile() {
-  mkdir -p $1
-  touch $1/$2
-}
-
 # Git
 git_current_branch() {
   local ref
@@ -417,9 +363,7 @@ pullall() {
 dropbox() {
   cd ~/Dropbox
 }
-
 #
-
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
