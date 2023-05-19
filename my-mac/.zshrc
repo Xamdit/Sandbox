@@ -31,7 +31,7 @@ backup() {
   cp ~/.bash_profile ~/Documents/Github/Sandbox/my-mac/
   current_dir=$(pwd)
   cd ~/Documents/Github/Sandbox/
-  fly "update : renew zshrc"
+  save "update : renew zshrc"
   cd $current_dir
   reload
 }
