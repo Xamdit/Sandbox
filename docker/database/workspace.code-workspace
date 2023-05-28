@@ -20,7 +20,6 @@
 			"**/website/system": true,
 		},
 		"workbench.colorCustomizations": {
-			"activityBarBadge.background": "#5C6BC0",
 			"activityBar.activeBorder": "#5C6BC0",
 			"list.activeSelectionForeground": "#5C6BC0",
 			"list.inactiveSelectionForeground": "#5C6BC0",
@@ -30,7 +29,6 @@
 			"textLink.foreground": "#5C6BC0",
 			"progressBar.background": "#5C6BC0",
 			"pickerGroup.foreground": "#5C6BC0",
-			"tab.activeBorder": "#5C6BC0",
 			"notificationLink.foreground": "#5C6BC0",
 			"editorWidget.resizeBorder": "#5C6BC0",
 			"editorWidget.border": "#5C6BC0",
@@ -41,11 +39,7 @@
 			"menu.selectionForeground": "#5C6BC0",
 			"menubar.selectionForeground": "#5C6BC0",
 			"editor.findMatchBorder": "#5C6BC0",
-			"selection.background": "#5C6BC040",
-			"statusBarItem.remoteBackground": "#5C6BC0",
-			"activityBar.background": "#063603",
-			"titleBar.activeBackground": "#084B05",
-			"titleBar.activeForeground": "#F1FEF0"
+			"selection.background": "#5C6BC040"
 		}
 	},
 }

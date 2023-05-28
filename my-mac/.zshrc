@@ -39,7 +39,8 @@ backup() {
 cdesk() {
   current_dir=$(pwd)
   cd ~/Desktop
-  rm -f *.png *.mov
+  rm *.png
+  rm *.mov
   reorder
   cd "$current_dir"
 }
@@ -71,10 +72,11 @@ alias siamraj="cd ~/Documents/workspace/siamraj"
 alias ps="docker ps -a"
 alias up='docker-compose up'
 # alias fup='docker-compose down;docker-compose up'
+
 fup() {
   docker-compose down
-  docker image prune
-  docker-compose up -d
+  yes | docker image prune
+  docker-compose up --force-recreate
 }
 
 booom() {
@@ -102,9 +104,13 @@ redocker() {
 }
 # sp stand for save point
 sp() {
-  git add .
-  git commit -m "temp : checkpoint"
-  git push
+  iteration=0
+  while [ $iteration -lt 2 ]; do
+    git add .
+    git commit -m "temp : save point"
+    iteration=$((iteration + 1))
+  done
+  echo "All changes have been pushed."
   git fetch
 }
 
