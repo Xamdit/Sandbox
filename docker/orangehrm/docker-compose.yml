@@ -1,33 +1,19 @@
-version: "3.3"
+version: '3'
 
 services:
-
   orangehrm:
-    image: orangehrm/orangehrm:latest
-    restart: unless-stopped
+    image: bitnami/orangehrm:latest
     ports:
-      - "8200:80"
-      - "8443:443"
+      - 80:8080
+      - 443:8443
     environment:
-      - ORANGEHRM_DATABASE_HOST=mariadb
+      - ORANGEHRM_DATABASE_HOST=host.docker.internal
+      - ORANGEHRM_DATABASE_PORT_NUMBER=3306
       - ORANGEHRM_DATABASE_USER=root
-      - ORANGEHRM_DATABASE_PASSWORD=orangehrm
+      - ORANGEHRM_DATABASE_PASSWORD=griktvtwi@wss3407
       - ORANGEHRM_DATABASE_NAME=orangehrm
-      - PUID=998
-      - PGID=100
-    volumes:
-      - ./orange:/orangehrm
-    depends_on:
-      - mariadb
-    links:
-      - mariadb:mariadb
 
-  mariadb:
-    image: mariadb:10.2
-    restart: unless-stopped
-    volumes:
-      - ./db_orange:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=orangehrm
-      - MYSQL_ROOT_USER=root
-      - MYSQL_DATABASE=orangehrm
+volumes:
+  db_data:
+
+

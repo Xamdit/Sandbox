@@ -1,0 +1,33 @@
+{
+  "name": "document",
+  "version": "0.0.0",
+  "description": "document for Mono-Project",
+  "author": "parin.k",
+  "license": "ISC",
+  "scripts": {
+    "dev": "dotnet watch",
+    "build": "dotnet publish -o ./app",
+    "docker": "docker stop document && docker rm document && docker rmi document && docker build -t document . && yarn docker:run",
+    "docker:run": "docker run -d -p 3000:3000 --name document document",
+    "prisma:merge": "cat prisma/schema/**.prisma > prisma/schema.prisma",
+    "prisma:migrate": "npx prisma migrate dev --name init --schema prisma/schema.prisma",
+    "prisma:format": "npx prisma format",
+    "prisma:inspect": "npx prisma introspect --schema prisma/schema.prisma",
+    "efcore:inspect": "dotnet ef dbcontext scaffold \"Server=localhost;Port=3306;Database=xamdit;User=root;Password=griktvtwi@wss3407\" Pomelo.EntityFrameworkCore.MySql -o ./entities/ -c MyDbContext -f",
+    "efcore:pull": "dotnet ef migrations add MyMigration",
+    "efcore:push": "dotnet ef database update MyMigration",
+    "version:major": "npm version major",
+    "version:minor": "npm version minor",
+    "version:patch": "npm version patch"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "4.13.0",
+    "@prisma/engines": "^4.7.1"
+  },
+  "devDependencies": {
+    "prisma": "4.13.0"
+  }
+}
