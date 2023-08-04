@@ -1,17 +1,15 @@
-version: "3"
-services:
-    db:
-        image: "microsoft/mssql-server-linux:2017-latest"
-        environment:
-            SA_PASSWORD: "password"
-            ACCEPT_EULA: "Y"
+version: '3.8'
 
-            mssql:
-    image: 'microsoft/mssql-server-linux:2017-latest'
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: mssql_container
     ports:
-        - '1433:1433'
+      - "1433:1433"
     environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=password
-    volumes:
-        - './drive:/var/opt/mssql'
+      SA_PASSWORD: griktvtwi@WSS00    # Change this to your desired password
+      ACCEPT_EULA: Y
+
+volumes:
+  mssql_data:
+    driver: local
