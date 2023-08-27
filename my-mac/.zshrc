@@ -1,4 +1,5 @@
 clear
+export PATH="/usr/local/bin:$PATH"
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="parin"
 source ~/.bash_profile
@@ -22,6 +23,29 @@ cmd() {
 
 config() {
   sudo code ~/.zshrc
+}
+
+camel() {
+
+  # Loop through each file in the current directory
+  for file in *; do
+    # Extract the first character of the file name
+    first_char=$(echo $file | cut -c1)
+
+    # Convert the first character to lowercase
+    lower_first_char=$(echo $first_char | tr 'A-Z' 'a-z')
+
+    # Extract the rest of the file name (from 2nd character to the end)
+    rest_of_file=$(echo $file | cut -c2-)
+
+    # Combine the lowercase first character with the rest of the file name
+    new_file="${lower_first_char}${rest_of_file}"
+
+    # Rename the file
+    if [ "$file" != "$new_file" ]; then
+      mv "$file" "$new_file"
+    fi
+  done
 }
 
 backup() {
@@ -177,9 +201,9 @@ fixed() {
   git fetch
 }
 
-sleep() {
-  pmset sleepnow
-}
+# sleep() {
+#   pmset sleepnow
+# }
 
 restart() {
   osascript -e 'tell application "System Events" to set quitapps to name of every application process whose visible is true and name is not "Finder"' -e 'repeat with closeall in quitapps' -e 'quit application closeall' -e 'end repeat'
