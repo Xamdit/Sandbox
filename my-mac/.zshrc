@@ -250,8 +250,8 @@ refresh() {
 
 reorder() {
   find ./ -name .DS_Store -delete
-  killall Finder
   find . -type d -empty -delete
+  killall Finder
 }
 # find ./ -name "._*" -type f -delete
 kill() {
