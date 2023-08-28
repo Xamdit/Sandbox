@@ -248,6 +248,27 @@ refresh() {
   echo 🔥🔥🔥 "already refresh" 🔥🔥🔥
 }
 
+fast_copy() {
+  # Check if the correct number of arguments are passed
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 SOURCE_DIR DEST_DIR"
+    exit 1
+  fi
+
+  # Check if source directory exists
+  if [ ! -d "$1" ]; then
+    echo "Source directory $1 does not exist."
+    exit 1
+  fi
+
+  # Perform the copy with rsync
+  # rsync -a "$1" "$2"
+  # Perform the copy with rsync and show progress
+  rsync -a --progress "$1" "$2"
+
+  echo "Copy complete."
+}
+
 reorder() {
   find ./ -name .DS_Store -delete
   find . -type d -empty -delete
