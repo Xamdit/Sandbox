@@ -261,12 +261,24 @@ fast_copy() {
     exit 1
   fi
 
-  # Perform the copy with rsync
-  # rsync -a "$1" "$2"
-  # Perform the copy with rsync and show progress
-  rsync -a --progress "$1" "$2"
+  # Count total files in source directory
+  total_files=$(find "$1" -type f | wc -l)
 
-  echo "Copy complete."
+  # Initialize counter for copied files
+  copied_files=0
+
+  # Perform the copy with rsync, showing progress for each file
+  rsync -a --progress "$1" "$2" | while read line; do
+    # Detect lines that signal the end of a file copy
+    if [[ $line == *to-chk=* ]]; then
+      ((copied_files++))
+      # Calculate percentage completion
+      percent=$(printf "%.2f" $(echo "$copied_files / $total_files * 100" | bc -l))
+      echo -ne "Overall Progress: ${percent}%\r"
+    fi
+  done
+
+  echo -e "\nCopy complete."
 }
 
 reorder() {
