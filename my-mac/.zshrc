@@ -25,27 +25,165 @@ config() {
   sudo code ~/.zshrc
 }
 
+rmtree() {
+  find . -type d -name $1 -exec rm -rf {} +
+}
+rmfile() {
+  find . -type f -name $1 -exec rm -rf {} +
+}
+
+capitalize_first_letter() {
+  echo "$1" | awk '{ $0=toupper(substr($0,1,1)) tolower(substr($0,2)); } 1'
+}
+
+jpg_to_png() {
+  # need
+  # brew install imagemagick
+
+  # Check if at least one argument is provided
+  if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 file1.jpg [file2.jpg ...]"
+    exit 1
+  fi
+
+  # Loop through all the file arguments
+  for jpg_file in "$@"; do
+    # Check if file exists
+    if [ ! -f "$jpg_file" ]; then
+      echo "File '$jpg_file' not found!"
+      continue
+    fi
+
+    # Extract the file name without the extension
+    filename=$(basename -- "$jpg_file")
+    extension="${filename##*.}"
+    filename="${filename%.*}"
+
+    # Check if the file is a JPEG file by its extension
+    if [ "$extension" != "jpg" ] && [ "$extension" != "jpeg" ]; then
+      echo "Skipping '$jpg_file' as it does not have a .jpg or .jpeg extension."
+      continue
+    fi
+
+    # Convert to PNG
+    png_file="${filename}.png"
+    convert "$jpg_file" "$png_file"
+    echo "Converted '$jpg_file' to '$png_file'"
+  done
+}
+
+# Recursive function to loop through each file and directory
+ucfirst() {
+  for entry in "$1"/*; do
+    if [ -d "$entry" ]; then
+      # If it's a directory, recurse into it
+      ucfirst "$entry"
+    else
+      # If it's a file, capitalize the first letter of the file name
+
+      # Extract filename and extension
+      filename=$(basename -- "$entry")
+      extension="${filename##*.}"
+      filename="${filename%.*}"
+
+      # Capitalize the first letter
+      new_filename=$(capitalize_first_letter "$filename")
+
+      # Rename file, but only if the filename actually needs to change
+      if [ "$new_filename" != "$filename" ]; then
+        mv "$entry" "$(dirname "$entry")/$new_filename.$extension"
+      fi
+    fi
+  done
+}
+
+# Function to convert snake_case to CamelCase
+snake_to_camel() {
+  echo $1 | awk 'BEGIN{FS="_"; OFS=""} {for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))} 1'
+}
+
+# Recursive function to loop through each file and directory
+makeCamel() {
+  for entry in "$1"/*; do
+    if [ -d "$entry" ]; then
+      # If it's a directory, recurse into it
+      makeCamel "$entry"
+    else
+      # If it's a file, rename it if it's in snake_case
+
+      # Extract filename and extension
+      filename=$(basename -- "$entry")
+      extension="${filename##*.}"
+      filename="${filename%.*}"
+
+      # Skip filenames that don't contain an underscore
+      if [[ ! "$filename" =~ "_" ]]; then
+        continue
+      fi
+
+      # Convert to CamelCase
+      new_filename=$(snake_to_camel "$filename")
+
+      # Rename file
+      mv "$entry" "$(dirname "$entry")/$new_filename.$extension"
+    fi
+  done
+}
+
 camel() {
 
-  # Loop through each file in the current directory
-  for file in *; do
+  # Loop through each file in the current directory and its subdirectories
+  find . -type f -print0 | while IFS= read -r -d '' file; do
+    # Extract the file name from the path
+    filename=$(basename -- "$file")
+
     # Extract the first character of the file name
-    first_char=$(echo $file | cut -c1)
+    first_char=$(echo $filename | cut -c1)
 
     # Convert the first character to lowercase
     lower_first_char=$(echo $first_char | tr 'A-Z' 'a-z')
 
     # Extract the rest of the file name (from 2nd character to the end)
-    rest_of_file=$(echo $file | cut -c2-)
+    rest_of_file=$(echo $filename | cut -c2-)
 
     # Combine the lowercase first character with the rest of the file name
     new_file="${lower_first_char}${rest_of_file}"
 
+    # Create a new path for the renamed file
+    dir=$(dirname -- "$file")
+    new_path="${dir}/${new_file}"
+
     # Rename the file
-    if [ "$file" != "$new_file" ]; then
-      mv "$file" "$new_file"
+    if [ "$file" != "$new_path" ]; then
+      mv "$file" "$new_path"
     fi
   done
+
+}
+to_snake_case() {
+  echo $1 | sed -r 's/([a-zA-Z])([A-Z])/\1-\2/g' | tr 'A-Z' 'a-z'
+}
+snake() {
+  # Function to convert CamelCase to snake-case
+
+  # Loop through each file in the current directory and its subdirectories
+  find . -type f -print0 | while IFS= read -r -d '' file; do
+    # Extract the file name from the path
+    filename=$(basename -- "$file")
+
+    # Convert the filename to snake-case
+    new_file=$(to_snake_case $filename)
+
+    # Create a new path for the renamed file
+    dir=$(dirname -- "$file")
+    new_path="${dir}/${new_file}"
+
+    # Rename the file
+    if [ "$file" != "$new_path" ]; then
+      mv "$file" "$new_path"
+    fi
+  done
+
 }
 
 backup() {
