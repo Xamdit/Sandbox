@@ -273,11 +273,11 @@ redocker() {
 # sp stand for save point
 sp() {
   iteration=0
-  while [ $iteration -lt 2 ]; do
-    git add .
-    git commit -m "temp : save point"
-    iteration=$((iteration + 1))
-  done
+  # while [ $iteration -lt 2 ]; do
+  git add .
+  git commit -m "temp : save point"
+  #   iteration=$((iteration + 1))
+  # done
   echo "All changes have been pushed."
   git fetch
 }
