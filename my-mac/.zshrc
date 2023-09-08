@@ -17,6 +17,12 @@ dcleanup() {
   docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
 }
 
+cls() {
+  find . -name .DS_Store -delete
+  find . -type d -empty -delete
+  find . -type d -name "node_modules" -exec rm -rf {} +
+  killall Finder
+}
 cmd() {
   sh command.sh $1
 }
