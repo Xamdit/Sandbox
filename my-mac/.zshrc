@@ -11,6 +11,51 @@ plandict() {
   echo 'password : f478fb75b477'
   ssh root@95.111.195.20
 }
+# Function to print directory tree
+print_tree() {
+
+  local indent="$2"
+  local dir="$1"
+  # Print directory name
+  echo "${indent}${dir}"
+
+  # Increase indent for child items
+  local new_indent="  $indent|-- "
+
+  for item in "$dir"/*; do
+    # If the item is a directory, recurse into it
+    if [ -d "$item" ]; then
+      print_tree "$item" "$new_indent"
+    else
+      # Print item name
+      echo "${new_indent}${item##*/}"
+    fi
+  done
+
+}
+count() {
+  # Check if directory exists
+  if [ -z "$1" ]; then
+    echo "Usage: $0 /path/to/directory [extension]"
+    exit 1
+  fi
+
+  if [ ! -d "$1" ]; then
+    echo "Error: Directory '$1' doesn't exist."
+    exit 1
+  fi
+
+  # Prepare find command string
+  FIND_CMD="find \"$1\" -type f"
+
+  # Check for optional extension
+  if [ ! -z "$2" ]; then
+    FIND_CMD="$FIND_CMD -name \"*.$2\""
+  fi
+
+  # Count files by extension (or by the given extension)
+  eval $FIND_CMD | awk -F. 'NF>1 {exts[$NF]++} END {for (ext in exts) print ext, exts[ext]}' | sort
+}
 
 dcleanup() {
   docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
