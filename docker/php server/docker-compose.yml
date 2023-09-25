@@ -25,7 +25,7 @@ services:
     container_name: mysql
     image: mariadb:latest
     ports:
-      - 3307:3306
+      - 3306:3306
     volumes:
       - ./docker/mariadb:/opt/data
     command: --init-file /opt/data/migration.sql
