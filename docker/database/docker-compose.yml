@@ -1,6 +1,6 @@
 # Source from https://www.masterzendframework.com/docker-development-environment/
 ---
-version: '3'
+version: "3"
 
 volumes:
   database_data:
@@ -13,8 +13,9 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./mariadb/data:/var/lib/mysql
       - ./mariadb/migration.sql:/opt/data/migration.sql
+      # - ./mariadb/data:/var/lib/mysql
+
     command: --init-file /opt/data/migration.sql
     environment:
       - MYSQL_ROOT_PASSWORD=password
