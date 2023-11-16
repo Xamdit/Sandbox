@@ -1,19 +1,24 @@
-version: '3'
-
+version: "3"
 services:
+  # OrangeHRM Application
   orangehrm:
-    image: bitnami/orangehrm:latest
+    image: orangehrm/orangehrm:latest
+    container_name: orangehrm_app
     ports:
-      - 80:8080
-      - 443:8443
+      - "8080:80"
     environment:
-      - ORANGEHRM_DATABASE_HOST=host.docker.internal
-      - ORANGEHRM_DATABASE_PORT_NUMBER=3306
-      - ORANGEHRM_DATABASE_USER=root
-      - ORANGEHRM_DATABASE_PASSWORD=griktvtwi@wss3407
-      - ORANGEHRM_DATABASE_NAME=orangehrm
+      - MYSQL_HOST=mysql
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_USER=orangehrm_user
+      - MYSQL_PASSWORD=orangehrm_password
+    depends_on:
+      - mysql
+    networks:
+      - orangehrm-net
+
+networks:
+  orangehrm-net:
+    driver: bridge
 
 volumes:
   db_data:
-
-

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:griktvtwi@wss3407@localhost:3306/orangehrm"
+  url      = "mysql://root:password@localhost:3306/orangehrm"
 }
 
 model abstract_display_field {
@@ -1713,7 +1713,7 @@ model ohrm_plugin {
 }
 
 model ohrm_project {
-  project_id            Int                     @default(autoincrement())
+  project_id            Int                     @unique @default(autoincrement())
   customer_id           Int
   name                  String?                 @db.VarChar(100)
   description           String?                 @db.VarChar(256)
