@@ -29,30 +29,30 @@ model abstract_display_field {
   is_meta                Boolean @default(false)
 }
 
-model hs_hr_config {
+model config {
   key   String @id @default("") @db.VarChar(100)
   value String @db.Text
 }
 
-model hs_hr_country {
-  cou_code                 String                     @id @default("") @db.Char(2)
-  name                     String                     @default("") @db.VarChar(80)
-  cou_name                 String                     @default("") @db.VarChar(80)
-  iso3                     String?                    @db.Char(3)
-  numcode                  Int?                       @db.SmallInt
-  ohrm_location            ohrm_location[]
-  ohrm_operational_country ohrm_operational_country[]
+model country {
+  cou_code            String                @id @default("") @db.Char(2)
+  name                String                @default("") @db.VarChar(80)
+  cou_name            String                @default("") @db.VarChar(80)
+  iso3                String?               @db.Char(3)
+  numcode             Int?                  @db.SmallInt
+  location            location[]
+  operational_country operational_country[]
 }
 
-model hs_hr_currency_type {
-  code                    Int                       @default(0)
-  currency_id             String                    @id @default("") @db.Char(3)
-  currency_name           String                    @default("") @db.VarChar(70)
-  hs_hr_emp_basicsalary   hs_hr_emp_basicsalary[]
-  ohrm_pay_grade_currency ohrm_pay_grade_currency[]
+model currency_type {
+  code               Int                  @default(0)
+  currency_id        String               @id @default("") @db.Char(3)
+  currency_name      String               @default("") @db.VarChar(70)
+  emp_basicsalary    emp_basicsalary[]
+  pay_grade_currency pay_grade_currency[]
 }
 
-model hs_hr_custom_export {
+model custom_export {
   export_id Int     @id
   name      String  @db.VarChar(250)
   fields    String? @db.Text
@@ -61,7 +61,7 @@ model hs_hr_custom_export {
   @@index([export_id], map: "emp_number")
 }
 
-model hs_hr_custom_fields {
+model custom_fields {
   field_num  Int     @id
   name       String  @db.VarChar(250)
   type       Int
@@ -72,7 +72,7 @@ model hs_hr_custom_fields {
   @@index([screen], map: "screen")
 }
 
-model hs_hr_custom_import {
+model custom_import {
   import_id   Int      @id
   name        String   @db.VarChar(250)
   fields      String?  @db.Text
@@ -81,44 +81,44 @@ model hs_hr_custom_import {
   @@index([import_id], map: "emp_number")
 }
 
-model hs_hr_district {
+model district {
   district_code String  @id @default("") @db.VarChar(13)
   district_name String? @db.VarChar(50)
   province_code String? @db.VarChar(13)
 }
 
-model hs_hr_emp_attachment {
-  emp_number         Int            @default(0)
-  eattach_id         Int            @default(0)
-  eattach_desc       String?        @db.VarChar(200)
-  eattach_filename   String?        @db.VarChar(100)
-  eattach_size       Int?           @default(0)
-  eattach_attachment Bytes?         @db.MediumBlob
-  eattach_type       String?        @db.VarChar(200)
-  screen             String?        @default("") @db.VarChar(100)
+model emp_attachment {
+  emp_number         Int       @default(0)
+  eattach_id         Int       @default(0)
+  eattach_desc       String?   @db.VarChar(200)
+  eattach_filename   String?   @db.VarChar(100)
+  eattach_size       Int?      @default(0)
+  eattach_attachment Bytes?    @db.MediumBlob
+  eattach_type       String?   @db.VarChar(200)
+  screen             String?   @default("") @db.VarChar(100)
   attached_by        Int?
-  attached_by_name   String?        @db.VarChar(200)
-  attached_time      DateTime?      @default(now()) @db.Timestamp(0)
-  hs_hr_employee     hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_attachment_ibfk_1")
+  attached_by_name   String?   @db.VarChar(200)
+  attached_time      DateTime? @default(now()) @db.Timestamp(0)
+  employee           employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_attachment_ibfk_1")
 
   @@id([emp_number, eattach_id])
   @@index([screen], map: "screen")
 }
 
-model hs_hr_emp_basicsalary {
-  id                    Int                     @id @default(autoincrement())
-  emp_number            Int                     @default(0)
-  sal_grd_code          Int?
-  currency_id           String                  @default("") @db.VarChar(6)
-  ebsal_basic_salary    String?                 @db.VarChar(100)
-  payperiod_code        String?                 @db.VarChar(13)
-  salary_component      String?                 @db.VarChar(100)
-  comments              String?                 @db.VarChar(255)
-  ohrm_pay_grade        ohrm_pay_grade?         @relation(fields: [sal_grd_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_basicsalary_ibfk_1")
-  hs_hr_currency_type   hs_hr_currency_type     @relation(fields: [currency_id], references: [currency_id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_basicsalary_ibfk_2")
-  hs_hr_employee        hs_hr_employee          @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_basicsalary_ibfk_3")
-  hs_hr_payperiod       hs_hr_payperiod?        @relation(fields: [payperiod_code], references: [payperiod_code], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_basicsalary_ibfk_4")
-  hs_hr_emp_directdebit hs_hr_emp_directdebit[]
+model emp_basicsalary {
+  id                 Int               @id @default(autoincrement())
+  emp_number         Int               @default(0)
+  sal_grd_code       Int?
+  currency_id        String            @default("") @db.VarChar(6)
+  ebsal_basic_salary String?           @db.VarChar(100)
+  payperiod_code     String?           @db.VarChar(13)
+  salary_component   String?           @db.VarChar(100)
+  comments           String?           @db.VarChar(255)
+  pay_grade          pay_grade?        @relation(fields: [sal_grd_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_basicsalary_ibfk_1")
+  currency_type      currency_type     @relation(fields: [currency_id], references: [currency_id], onDelete: Cascade, onUpdate: Restrict, map: "emp_basicsalary_ibfk_2")
+  employee           employee          @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_basicsalary_ibfk_3")
+  payperiod          payperiod?        @relation(fields: [payperiod_code], references: [payperiod_code], onDelete: Cascade, onUpdate: Restrict, map: "emp_basicsalary_ibfk_4")
+  emp_directdebit    emp_directdebit[]
 
   @@index([currency_id], map: "currency_id")
   @@index([emp_number], map: "emp_number")
@@ -126,148 +126,148 @@ model hs_hr_emp_basicsalary {
   @@index([sal_grd_code], map: "sal_grd_code")
 }
 
-model hs_hr_emp_children {
-  emp_number       Int            @default(0)
-  ec_seqno         Decimal        @default(0) @db.Decimal(2, 0)
-  ec_name          String?        @default("") @db.VarChar(100)
-  ec_date_of_birth DateTime?      @db.Date
-  hs_hr_employee   hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_children_ibfk_1")
+model emp_children {
+  emp_number       Int       @default(0)
+  ec_seqno         Decimal   @default(0) @db.Decimal(2, 0)
+  ec_name          String?   @default("") @db.VarChar(100)
+  ec_date_of_birth DateTime? @db.Date
+  employee         employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_children_ibfk_1")
 
   @@id([emp_number, ec_seqno])
 }
 
-model hs_hr_emp_contract_extend {
-  emp_number             Int            @default(0)
-  econ_extend_id         Decimal        @default(0) @db.Decimal(10, 0)
-  econ_extend_start_date DateTime?      @db.DateTime(0)
-  econ_extend_end_date   DateTime?      @db.DateTime(0)
-  hs_hr_employee         hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_contract_extend_ibfk_1")
+model emp_contract_extend {
+  emp_number             Int       @default(0)
+  econ_extend_id         Decimal   @default(0) @db.Decimal(10, 0)
+  econ_extend_start_date DateTime? @db.DateTime(0)
+  econ_extend_end_date   DateTime? @db.DateTime(0)
+  employee               employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_contract_extend_ibfk_1")
 
   @@id([emp_number, econ_extend_id])
 }
 
-model hs_hr_emp_dependents {
-  emp_number           Int                                        @default(0)
-  ed_seqno             Decimal                                    @default(0) @db.Decimal(2, 0)
-  ed_name              String?                                    @default("") @db.VarChar(100)
-  ed_relationship_type hs_hr_emp_dependents_ed_relationship_type?
-  ed_relationship      String?                                    @default("") @db.VarChar(100)
-  ed_date_of_birth     DateTime?                                  @db.Date
-  hs_hr_employee       hs_hr_employee                             @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_dependents_ibfk_1")
+model emp_dependents {
+  emp_number           Int                                  @default(0)
+  ed_seqno             Decimal                              @default(0) @db.Decimal(2, 0)
+  ed_name              String?                              @default("") @db.VarChar(100)
+  ed_relationship_type emp_dependents_ed_relationship_type?
+  ed_relationship      String?                              @default("") @db.VarChar(100)
+  ed_date_of_birth     DateTime?                            @db.Date
+  employee             employee                             @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_dependents_ibfk_1")
 
   @@id([emp_number, ed_seqno])
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model hs_hr_emp_directdebit {
-  id                    Int                   @id @default(autoincrement())
-  salary_id             Int
-  dd_routing_num        Int
-  dd_account            String                @default("") @db.VarChar(100)
-  dd_amount             Decimal               @db.Decimal(11, 2)
-  dd_account_type       String                @default("") @db.VarChar(20)
-  dd_transaction_type   String                @default("") @db.VarChar(20)
-  hs_hr_emp_basicsalary hs_hr_emp_basicsalary @relation(fields: [salary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_directdebit_ibfk_1")
+model emp_directdebit {
+  id                  Int             @id @default(autoincrement())
+  salary_id           Int
+  dd_routing_num      Int
+  dd_account          String          @default("") @db.VarChar(100)
+  dd_amount           Decimal         @db.Decimal(11, 2)
+  dd_account_type     String          @default("") @db.VarChar(20)
+  dd_transaction_type String          @default("") @db.VarChar(20)
+  emp_basicsalary     emp_basicsalary @relation(fields: [salary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_directdebit_ibfk_1")
 
   @@index([salary_id], map: "salary_id")
 }
 
-model hs_hr_emp_emergency_contacts {
-  emp_number       Int            @default(0)
-  eec_seqno        Decimal        @default(0) @db.Decimal(2, 0)
-  eec_name         String?        @default("") @db.VarChar(100)
-  eec_relationship String?        @default("") @db.VarChar(100)
-  eec_home_no      String?        @default("") @db.VarChar(100)
-  eec_mobile_no    String?        @default("") @db.VarChar(100)
-  eec_office_no    String?        @default("") @db.VarChar(100)
-  hs_hr_employee   hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_emergency_contacts_ibfk_1")
+model emp_emergency_contacts {
+  emp_number       Int      @default(0)
+  eec_seqno        Decimal  @default(0) @db.Decimal(2, 0)
+  eec_name         String?  @default("") @db.VarChar(100)
+  eec_relationship String?  @default("") @db.VarChar(100)
+  eec_home_no      String?  @default("") @db.VarChar(100)
+  eec_mobile_no    String?  @default("") @db.VarChar(100)
+  eec_office_no    String?  @default("") @db.VarChar(100)
+  employee         employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_emergency_contacts_ibfk_1")
 
   @@id([emp_number, eec_seqno])
 }
 
-model hs_hr_emp_history_of_ealier_pos {
-  emp_number      Int            @default(0)
-  emp_seqno       Decimal        @default(0) @db.Decimal(2, 0)
-  ehoep_job_title String?        @default("") @db.VarChar(100)
-  ehoep_years     String?        @default("") @db.VarChar(100)
-  hs_hr_employee  hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_history_of_ealier_pos_ibfk_1")
+model emp_history_of_ealier_pos {
+  emp_number      Int      @default(0)
+  emp_seqno       Decimal  @default(0) @db.Decimal(2, 0)
+  ehoep_job_title String?  @default("") @db.VarChar(100)
+  ehoep_years     String?  @default("") @db.VarChar(100)
+  employee        employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_history_of_ealier_pos_ibfk_1")
 
   @@id([emp_number, emp_seqno])
 }
 
-model hs_hr_emp_language {
-  emp_number     Int            @default(0)
-  lang_id        Int
-  fluency        Int            @default(0) @db.SmallInt
-  competency     Int?           @default(0) @db.SmallInt
-  comments       String?        @db.VarChar(100)
-  hs_hr_employee hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_language_ibfk_1")
-  ohrm_language  ohrm_language  @relation(fields: [lang_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_language_ibfk_2")
+model emp_language {
+  emp_number Int      @default(0)
+  lang_id    Int
+  fluency    Int      @default(0) @db.SmallInt
+  competency Int?     @default(0) @db.SmallInt
+  comments   String?  @db.VarChar(100)
+  employee   employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_language_ibfk_1")
+  language   language @relation(fields: [lang_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_language_ibfk_2")
 
   @@id([emp_number, lang_id, fluency])
   @@index([lang_id], map: "lang_id")
 }
 
-model hs_hr_emp_locations {
-  emp_number     Int
-  location_id    Int
-  ohrm_location  ohrm_location  @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_locations_ibfk_1")
-  hs_hr_employee hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_locations_ibfk_2")
+model emp_locations {
+  emp_number  Int
+  location_id Int
+  location    location @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_locations_ibfk_1")
+  employee    employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_locations_ibfk_2")
 
   @@id([emp_number, location_id])
   @@index([location_id], map: "location_id")
 }
 
-model hs_hr_emp_member_detail {
-  id                        Int             @id @default(autoincrement())
-  emp_number                Int             @default(0)
-  membship_code             Int             @default(0)
-  ememb_subscript_ownership String?         @db.VarChar(20)
-  ememb_subscript_amount    Decimal?        @db.Decimal(15, 2)
-  ememb_subs_currency       String?         @db.VarChar(20)
-  ememb_commence_date       DateTime?       @db.Date
-  ememb_renewal_date        DateTime?       @db.Date
-  ohrm_membership           ohrm_membership @relation(fields: [membship_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_member_detail_ibfk_1")
-  hs_hr_employee            hs_hr_employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_member_detail_ibfk_2")
+model emp_member_detail {
+  id                        Int        @id @default(autoincrement())
+  emp_number                Int        @default(0)
+  membship_code             Int        @default(0)
+  ememb_subscript_ownership String?    @db.VarChar(20)
+  ememb_subscript_amount    Decimal?   @db.Decimal(15, 2)
+  ememb_subs_currency       String?    @db.VarChar(20)
+  ememb_commence_date       DateTime?  @db.Date
+  ememb_renewal_date        DateTime?  @db.Date
+  membership                membership @relation(fields: [membship_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_member_detail_ibfk_1")
+  employee                  employee   @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_member_detail_ibfk_2")
 
   @@index([emp_number], map: "emp_number")
   @@index([membship_code], map: "membship_code")
 }
 
-model hs_hr_emp_passport {
-  emp_number            Int            @default(0)
-  ep_seqno              Decimal        @default(0) @db.Decimal(2, 0)
-  ep_passport_num       String         @default("") @db.VarChar(100)
-  ep_passportissueddate DateTime?      @db.DateTime(0)
-  ep_passportexpiredate DateTime?      @db.DateTime(0)
-  ep_comments           String?        @db.VarChar(255)
-  ep_passport_type_flg  Int?           @db.SmallInt
-  ep_i9_status          String?        @default("") @db.VarChar(100)
-  ep_i9_review_date     DateTime?      @db.Date
-  cou_code              String?        @db.VarChar(6)
-  hs_hr_employee        hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_passport_ibfk_1")
+model emp_passport {
+  emp_number            Int       @default(0)
+  ep_seqno              Decimal   @default(0) @db.Decimal(2, 0)
+  ep_passport_num       String    @default("") @db.VarChar(100)
+  ep_passportissueddate DateTime? @db.DateTime(0)
+  ep_passportexpiredate DateTime? @db.DateTime(0)
+  ep_comments           String?   @db.VarChar(255)
+  ep_passport_type_flg  Int?      @db.SmallInt
+  ep_i9_status          String?   @default("") @db.VarChar(100)
+  ep_i9_review_date     DateTime? @db.Date
+  cou_code              String?   @db.VarChar(6)
+  employee              employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_passport_ibfk_1")
 
   @@id([emp_number, ep_seqno])
 }
 
-model hs_hr_emp_picture {
-  emp_number       Int            @id @default(0)
-  epic_picture     Bytes?         @db.MediumBlob
-  epic_filename    String?        @db.VarChar(100)
-  epic_type        String?        @db.VarChar(50)
-  epic_file_size   String?        @db.VarChar(20)
-  epic_file_width  String?        @db.VarChar(20)
-  epic_file_height String?        @db.VarChar(20)
-  hs_hr_employee   hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_picture_ibfk_1")
+model emp_picture {
+  emp_number       Int      @id @default(0)
+  epic_picture     Bytes?   @db.MediumBlob
+  epic_filename    String?  @db.VarChar(100)
+  epic_type        String?  @db.VarChar(50)
+  epic_file_size   String?  @db.VarChar(20)
+  epic_file_width  String?  @db.VarChar(20)
+  epic_file_height String?  @db.VarChar(20)
+  employee         employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_picture_ibfk_1")
 }
 
-model hs_hr_emp_reportto {
-  erep_sup_emp_number                                                   Int                       @default(0)
-  erep_sub_emp_number                                                   Int                       @default(0)
-  erep_reporting_mode                                                   Int                       @default(0)
-  hs_hr_employee_hs_hr_emp_reportto_erep_sup_emp_numberTohs_hr_employee hs_hr_employee            @relation("hs_hr_emp_reportto_erep_sup_emp_numberTohs_hr_employee", fields: [erep_sup_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_reportto_ibfk_1")
-  hs_hr_employee_hs_hr_emp_reportto_erep_sub_emp_numberTohs_hr_employee hs_hr_employee            @relation("hs_hr_emp_reportto_erep_sub_emp_numberTohs_hr_employee", fields: [erep_sub_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_reportto_ibfk_2")
-  ohrm_emp_reporting_method                                             ohrm_emp_reporting_method @relation(fields: [erep_reporting_mode], references: [reporting_method_id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_reportto_ibfk_3")
+model emp_reportto {
+  erep_sup_emp_number                                 Int                  @default(0)
+  erep_sub_emp_number                                 Int                  @default(0)
+  erep_reporting_mode                                 Int                  @default(0)
+  employee_emp_reportto_erep_sup_emp_numberToemployee employee             @relation("emp_reportto_erep_sup_emp_numberToemployee", fields: [erep_sup_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_reportto_ibfk_1")
+  employee_emp_reportto_erep_sub_emp_numberToemployee employee             @relation("emp_reportto_erep_sub_emp_numberToemployee", fields: [erep_sub_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_reportto_ibfk_2")
+  emp_reporting_method                                emp_reporting_method @relation(fields: [erep_reporting_mode], references: [reporting_method_id], onDelete: Cascade, onUpdate: Restrict, map: "emp_reportto_ibfk_3")
 
   @@id([erep_sup_emp_number, erep_sub_emp_number, erep_reporting_mode])
   @@index([erep_reporting_mode], map: "erep_reporting_mode")
@@ -275,144 +275,144 @@ model hs_hr_emp_reportto {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model hs_hr_emp_skill {
-  emp_number     Int            @default(0)
-  skill_id       Int
-  years_of_exp   Decimal?       @db.Decimal(2, 0)
-  comments       String         @default("") @db.VarChar(100)
-  hs_hr_employee hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_skill_ibfk_1")
-  ohrm_skill     ohrm_skill     @relation(fields: [skill_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_skill_ibfk_2")
+model emp_skill {
+  emp_number   Int      @default(0)
+  skill_id     Int
+  years_of_exp Decimal? @db.Decimal(2, 0)
+  comments     String   @default("") @db.VarChar(100)
+  employee     employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_skill_ibfk_1")
+  skill        skill    @relation(fields: [skill_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_skill_ibfk_2")
 
   @@index([emp_number], map: "emp_number")
   @@index([skill_id], map: "skill_id")
   @@ignore
 }
 
-model hs_hr_emp_us_tax {
-  emp_number             Int            @id @default(0)
-  tax_federal_status     String?        @db.VarChar(13)
-  tax_federal_exceptions Int?           @default(0)
-  tax_state              String?        @db.VarChar(13)
-  tax_state_status       String?        @db.VarChar(13)
-  tax_state_exceptions   Int?           @default(0)
-  tax_unemp_state        String?        @db.VarChar(13)
-  tax_work_state         String?        @db.VarChar(13)
-  hs_hr_employee         hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_us_tax_ibfk_1")
+model emp_us_tax {
+  emp_number             Int      @id @default(0)
+  tax_federal_status     String?  @db.VarChar(13)
+  tax_federal_exceptions Int?     @default(0)
+  tax_state              String?  @db.VarChar(13)
+  tax_state_status       String?  @db.VarChar(13)
+  tax_state_exceptions   Int?     @default(0)
+  tax_unemp_state        String?  @db.VarChar(13)
+  tax_work_state         String?  @db.VarChar(13)
+  employee               employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_us_tax_ibfk_1")
 }
 
-model hs_hr_emp_work_experience {
-  emp_number     Int            @default(0)
-  eexp_seqno     Decimal        @default(0) @db.Decimal(10, 0)
-  eexp_employer  String?        @db.VarChar(100)
-  eexp_jobtit    String?        @db.VarChar(120)
-  eexp_from_date DateTime?      @db.DateTime(0)
-  eexp_to_date   DateTime?      @db.DateTime(0)
-  eexp_comments  String?        @db.VarChar(200)
+model emp_work_experience {
+  emp_number     Int       @default(0)
+  eexp_seqno     Decimal   @default(0) @db.Decimal(10, 0)
+  eexp_employer  String?   @db.VarChar(100)
+  eexp_jobtit    String?   @db.VarChar(120)
+  eexp_from_date DateTime? @db.DateTime(0)
+  eexp_to_date   DateTime? @db.DateTime(0)
+  eexp_comments  String?   @db.VarChar(200)
   eexp_internal  Int?
-  hs_hr_employee hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_emp_work_experience_ibfk_1")
+  employee       employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_work_experience_ibfk_1")
 
   @@id([emp_number, eexp_seqno])
 }
 
-model hs_hr_employee {
-  emp_number                                                                Int                                 @id @default(autoincrement())
-  employee_id                                                               String?                             @db.VarChar(50)
-  emp_lastname                                                              String                              @default("") @db.VarChar(100)
-  emp_firstname                                                             String                              @default("") @db.VarChar(100)
-  emp_middle_name                                                           String                              @default("") @db.VarChar(100)
-  emp_nick_name                                                             String?                             @default("") @db.VarChar(100)
-  emp_smoker                                                                Int?                                @default(0) @db.SmallInt
-  ethnic_race_code                                                          String?                             @db.VarChar(13)
-  emp_birthday                                                              DateTime?                           @db.Date
-  nation_code                                                               Int?
-  emp_gender                                                                Int?                                @db.SmallInt
-  emp_marital_status                                                        String?                             @db.VarChar(20)
-  emp_ssn_num                                                               String?                             @default("") @db.VarChar(100)
-  emp_sin_num                                                               String?                             @default("") @db.VarChar(100)
-  emp_other_id                                                              String?                             @default("") @db.VarChar(100)
-  emp_dri_lice_num                                                          String?                             @default("") @db.VarChar(100)
-  emp_dri_lice_exp_date                                                     DateTime?                           @db.Date
-  emp_military_service                                                      String?                             @default("") @db.VarChar(100)
-  emp_status                                                                Int?
-  job_title_code                                                            Int?
-  eeo_cat_code                                                              Int?
-  work_station                                                              Int?
-  emp_street1                                                               String?                             @default("") @db.VarChar(100)
-  emp_street2                                                               String?                             @default("") @db.VarChar(100)
-  city_code                                                                 String?                             @default("") @db.VarChar(100)
-  coun_code                                                                 String?                             @default("") @db.VarChar(100)
-  provin_code                                                               String?                             @default("") @db.VarChar(100)
-  emp_zipcode                                                               String?                             @db.VarChar(20)
-  emp_hm_telephone                                                          String?                             @db.VarChar(50)
-  emp_mobile                                                                String?                             @db.VarChar(50)
-  emp_work_telephone                                                        String?                             @db.VarChar(50)
-  emp_work_email                                                            String?                             @db.VarChar(50)
-  sal_grd_code                                                              String?                             @db.VarChar(13)
-  joined_date                                                               DateTime?                           @db.Date
-  emp_oth_email                                                             String?                             @db.VarChar(50)
-  termination_id                                                            Int?
-  custom1                                                                   String?                             @db.VarChar(250)
-  custom2                                                                   String?                             @db.VarChar(250)
-  custom3                                                                   String?                             @db.VarChar(250)
-  custom4                                                                   String?                             @db.VarChar(250)
-  custom5                                                                   String?                             @db.VarChar(250)
-  custom6                                                                   String?                             @db.VarChar(250)
-  custom7                                                                   String?                             @db.VarChar(250)
-  custom8                                                                   String?                             @db.VarChar(250)
-  custom9                                                                   String?                             @db.VarChar(250)
-  custom10                                                                  String?                             @db.VarChar(250)
-  purged_at                                                                 DateTime?                           @db.Timestamp(0)
-  hs_hr_emp_attachment                                                      hs_hr_emp_attachment[]
-  hs_hr_emp_basicsalary                                                     hs_hr_emp_basicsalary[]
-  hs_hr_emp_children                                                        hs_hr_emp_children[]
-  hs_hr_emp_contract_extend                                                 hs_hr_emp_contract_extend[]
-  hs_hr_emp_dependents                                                      hs_hr_emp_dependents[]
-  hs_hr_emp_emergency_contacts                                              hs_hr_emp_emergency_contacts[]
-  hs_hr_emp_history_of_ealier_pos                                           hs_hr_emp_history_of_ealier_pos[]
-  hs_hr_emp_language                                                        hs_hr_emp_language[]
-  hs_hr_emp_locations                                                       hs_hr_emp_locations[]
-  hs_hr_emp_member_detail                                                   hs_hr_emp_member_detail[]
-  hs_hr_emp_passport                                                        hs_hr_emp_passport[]
-  hs_hr_emp_picture                                                         hs_hr_emp_picture?
-  hs_hr_emp_reportto_hs_hr_emp_reportto_erep_sup_emp_numberTohs_hr_employee hs_hr_emp_reportto[]                @relation("hs_hr_emp_reportto_erep_sup_emp_numberTohs_hr_employee")
-  hs_hr_emp_reportto_hs_hr_emp_reportto_erep_sub_emp_numberTohs_hr_employee hs_hr_emp_reportto[]                @relation("hs_hr_emp_reportto_erep_sub_emp_numberTohs_hr_employee")
-  hs_hr_emp_skill                                                           hs_hr_emp_skill[]                   @ignore
-  hs_hr_emp_us_tax                                                          hs_hr_emp_us_tax?
-  hs_hr_emp_work_experience                                                 hs_hr_emp_work_experience[]
-  ohrm_subunit                                                              ohrm_subunit?                       @relation(fields: [work_station], references: [id], onUpdate: Restrict, map: "hs_hr_employee_ibfk_1")
-  ohrm_nationality                                                          ohrm_nationality?                   @relation(fields: [nation_code], references: [id], onUpdate: Restrict, map: "hs_hr_employee_ibfk_2")
-  ohrm_job_title                                                            ohrm_job_title?                     @relation(fields: [job_title_code], references: [id], onUpdate: Restrict, map: "hs_hr_employee_ibfk_3")
-  ohrm_employment_status                                                    ohrm_employment_status?             @relation(fields: [emp_status], references: [id], onUpdate: Restrict, map: "hs_hr_employee_ibfk_4")
-  ohrm_job_category                                                         ohrm_job_category?                  @relation(fields: [eeo_cat_code], references: [id], onUpdate: Restrict, map: "hs_hr_employee_ibfk_5")
-  ohrm_emp_termination_hs_hr_employee_termination_idToohrm_emp_termination  ohrm_emp_termination?               @relation("hs_hr_employee_termination_idToohrm_emp_termination", fields: [termination_id], references: [id], onUpdate: Restrict, map: "hs_hr_employee_ibfk_6")
-  ohrm_buzz_comment                                                         ohrm_buzz_comment[]
-  ohrm_buzz_like_on_comment                                                 ohrm_buzz_like_on_comment[]
-  ohrm_buzz_like_on_share                                                   ohrm_buzz_like_on_share[]
-  ohrm_buzz_notification_metadata                                           ohrm_buzz_notification_metadata?
-  ohrm_buzz_post                                                            ohrm_buzz_post[]
-  ohrm_buzz_share                                                           ohrm_buzz_share[]
-  ohrm_buzz_unlike_on_comment                                               ohrm_buzz_unlike_on_comment[]
-  ohrm_buzz_unlike_on_share                                                 ohrm_buzz_unlike_on_share[]
-  ohrm_emp_education                                                        ohrm_emp_education[]
-  ohrm_emp_license                                                          ohrm_emp_license[]
-  ohrm_emp_termination_ohrm_emp_termination_emp_numberTohs_hr_employee      ohrm_emp_termination[]              @relation("ohrm_emp_termination_emp_numberTohs_hr_employee")
-  ohrm_employee_work_shift                                                  ohrm_employee_work_shift[]
-  ohrm_job_candidate                                                        ohrm_job_candidate[]
-  ohrm_job_candidate_history                                                ohrm_job_candidate_history[]
-  ohrm_job_interview_interviewer                                            ohrm_job_interview_interviewer[]
-  ohrm_job_vacancy                                                          ohrm_job_vacancy[]
-  ohrm_leave_adjustment                                                     ohrm_leave_adjustment[]
-  ohrm_leave_comment                                                        ohrm_leave_comment[]
-  ohrm_leave_entitlement                                                    ohrm_leave_entitlement[]
-  ohrm_leave_request                                                        ohrm_leave_request[]
-  ohrm_leave_request_comment                                                ohrm_leave_request_comment[]
-  ohrm_performance_review                                                   ohrm_performance_review[]
-  ohrm_performance_track_ohrm_performance_track_emp_numberTohs_hr_employee  ohrm_performance_track[]            @relation("ohrm_performance_track_emp_numberTohs_hr_employee")
-  ohrm_performance_track_ohrm_performance_track_added_byTohs_hr_employee    ohrm_performance_track[]            @relation("ohrm_performance_track_added_byTohs_hr_employee")
-  ohrm_performance_tracker_log                                              ohrm_performance_tracker_log[]
-  ohrm_performance_tracker_reviewer                                         ohrm_performance_tracker_reviewer[]
-  ohrm_project_admin                                                        ohrm_project_admin[]
-  ohrm_user                                                                 ohrm_user[]
+model employee {
+  emp_number                                               Int                            @id @default(autoincrement())
+  employee_id                                              String?                        @db.VarChar(50)
+  emp_lastname                                             String                         @default("") @db.VarChar(100)
+  emp_firstname                                            String                         @default("") @db.VarChar(100)
+  emp_middle_name                                          String                         @default("") @db.VarChar(100)
+  emp_nick_name                                            String?                        @default("") @db.VarChar(100)
+  emp_smoker                                               Int?                           @default(0) @db.SmallInt
+  ethnic_race_code                                         String?                        @db.VarChar(13)
+  emp_birthday                                             DateTime?                      @db.Date
+  nation_code                                              Int?
+  emp_gender                                               Int?                           @db.SmallInt
+  emp_marital_status                                       String?                        @db.VarChar(20)
+  emp_ssn_num                                              String?                        @default("") @db.VarChar(100)
+  emp_sin_num                                              String?                        @default("") @db.VarChar(100)
+  emp_other_id                                             String?                        @default("") @db.VarChar(100)
+  emp_dri_lice_num                                         String?                        @default("") @db.VarChar(100)
+  emp_dri_lice_exp_date                                    DateTime?                      @db.Date
+  emp_military_service                                     String?                        @default("") @db.VarChar(100)
+  emp_status                                               Int?
+  job_title_code                                           Int?
+  eeo_cat_code                                             Int?
+  work_station                                             Int?
+  emp_street1                                              String?                        @default("") @db.VarChar(100)
+  emp_street2                                              String?                        @default("") @db.VarChar(100)
+  city_code                                                String?                        @default("") @db.VarChar(100)
+  coun_code                                                String?                        @default("") @db.VarChar(100)
+  provin_code                                              String?                        @default("") @db.VarChar(100)
+  emp_zipcode                                              String?                        @db.VarChar(20)
+  emp_hm_telephone                                         String?                        @db.VarChar(50)
+  emp_mobile                                               String?                        @db.VarChar(50)
+  emp_work_telephone                                       String?                        @db.VarChar(50)
+  emp_work_email                                           String?                        @db.VarChar(50)
+  sal_grd_code                                             String?                        @db.VarChar(13)
+  joined_date                                              DateTime?                      @db.Date
+  emp_oth_email                                            String?                        @db.VarChar(50)
+  termination_id                                           Int?
+  custom1                                                  String?                        @db.VarChar(250)
+  custom2                                                  String?                        @db.VarChar(250)
+  custom3                                                  String?                        @db.VarChar(250)
+  custom4                                                  String?                        @db.VarChar(250)
+  custom5                                                  String?                        @db.VarChar(250)
+  custom6                                                  String?                        @db.VarChar(250)
+  custom7                                                  String?                        @db.VarChar(250)
+  custom8                                                  String?                        @db.VarChar(250)
+  custom9                                                  String?                        @db.VarChar(250)
+  custom10                                                 String?                        @db.VarChar(250)
+  purged_at                                                DateTime?                      @db.Timestamp(0)
+  emp_attachment                                           emp_attachment[]
+  emp_basicsalary                                          emp_basicsalary[]
+  emp_children                                             emp_children[]
+  emp_contract_extend                                      emp_contract_extend[]
+  emp_dependents                                           emp_dependents[]
+  emp_emergency_contacts                                   emp_emergency_contacts[]
+  emp_history_of_ealier_pos                                emp_history_of_ealier_pos[]
+  emp_language                                             emp_language[]
+  emp_locations                                            emp_locations[]
+  emp_member_detail                                        emp_member_detail[]
+  emp_passport                                             emp_passport[]
+  emp_picture                                              emp_picture?
+  emp_reportto_emp_reportto_erep_sup_emp_numberToemployee  emp_reportto[]                 @relation("emp_reportto_erep_sup_emp_numberToemployee")
+  emp_reportto_emp_reportto_erep_sub_emp_numberToemployee  emp_reportto[]                 @relation("emp_reportto_erep_sub_emp_numberToemployee")
+  emp_skill                                                emp_skill[]                    @ignore
+  emp_us_tax                                               emp_us_tax?
+  emp_work_experience                                      emp_work_experience[]
+  subunit                                                  subunit?                       @relation(fields: [work_station], references: [id], onUpdate: Restrict, map: "employee_ibfk_1")
+  nationality                                              nationality?                   @relation(fields: [nation_code], references: [id], onUpdate: Restrict, map: "employee_ibfk_2")
+  job_title                                                job_title?                     @relation(fields: [job_title_code], references: [id], onUpdate: Restrict, map: "employee_ibfk_3")
+  employment_status                                        employment_status?             @relation(fields: [emp_status], references: [id], onUpdate: Restrict, map: "employee_ibfk_4")
+  job_category                                             job_category?                  @relation(fields: [eeo_cat_code], references: [id], onUpdate: Restrict, map: "employee_ibfk_5")
+  emp_termination_employee_termination_idToemp_termination emp_termination?               @relation("employee_termination_idToemp_termination", fields: [termination_id], references: [id], onUpdate: Restrict, map: "employee_ibfk_6")
+  buzz_comment                                             buzz_comment[]
+  buzz_like_on_comment                                     buzz_like_on_comment[]
+  buzz_like_on_share                                       buzz_like_on_share[]
+  buzz_notification_metadata                               buzz_notification_metadata?
+  buzz_post                                                buzz_post[]
+  buzz_share                                               buzz_share[]
+  buzz_unlike_on_comment                                   buzz_unlike_on_comment[]
+  buzz_unlike_on_share                                     buzz_unlike_on_share[]
+  emp_education                                            emp_education[]
+  emp_license                                              emp_license[]
+  emp_termination_emp_termination_emp_numberToemployee     emp_termination[]              @relation("emp_termination_emp_numberToemployee")
+  employee_work_shift                                      employee_work_shift[]
+  job_candidate                                            job_candidate[]
+  job_candidate_history                                    job_candidate_history[]
+  job_interview_interviewer                                job_interview_interviewer[]
+  job_vacancy                                              job_vacancy[]
+  leave_adjustment                                         leave_adjustment[]
+  leave_comment                                            leave_comment[]
+  leave_entitlement                                        leave_entitlement[]
+  leave_request                                            leave_request[]
+  leave_request_comment                                    leave_request_comment[]
+  performance_review                                       performance_review[]
+  performance_track_performance_track_emp_numberToemployee performance_track[]            @relation("performance_track_emp_numberToemployee")
+  performance_track_performance_track_added_byToemployee   performance_track[]            @relation("performance_track_added_byToemployee")
+  performance_tracker_log                                  performance_tracker_log[]
+  performance_tracker_reviewer                             performance_tracker_reviewer[]
+  project_admin                                            project_admin[]
+  user                                                     user[]
 
   @@index([eeo_cat_code], map: "eeo_cat_code")
   @@index([emp_status], map: "emp_status")
@@ -422,30 +422,30 @@ model hs_hr_employee {
   @@index([work_station], map: "work_station")
 }
 
-model hs_hr_jobtit_empstat {
-  jobtit_code            Int
-  estat_code             Int
-  ohrm_job_title         ohrm_job_title         @relation(fields: [jobtit_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_jobtit_empstat_ibfk_1")
-  ohrm_employment_status ohrm_employment_status @relation(fields: [estat_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_jobtit_empstat_ibfk_2")
+model jobtit_empstat {
+  jobtit_code       Int
+  estat_code        Int
+  job_title         job_title         @relation(fields: [jobtit_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "jobtit_empstat_ibfk_1")
+  employment_status employment_status @relation(fields: [estat_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "jobtit_empstat_ibfk_2")
 
   @@id([jobtit_code, estat_code])
   @@index([estat_code], map: "estat_code")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model hs_hr_mailnotifications {
+model mailnotifications {
   user_id              Int
   notification_type_id Int
   status               Int
-  email                String?   @db.VarChar(100)
-  ohrm_user            ohrm_user @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "hs_hr_mailnotifications_ibfk_1")
+  email                String? @db.VarChar(100)
+  user                 user    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "mailnotifications_ibfk_1")
 
   @@index([notification_type_id], map: "notification_type_id")
   @@index([user_id], map: "user_id")
   @@ignore
 }
 
-model hs_hr_module {
+model module {
   mod_id      String  @id @default("") @db.VarChar(36)
   name        String? @db.VarChar(45)
   owner       String? @db.VarChar(45)
@@ -454,7 +454,7 @@ model hs_hr_module {
   description String? @db.Text
 }
 
-model hs_hr_pay_period {
+model pay_period {
   id                         Int      @id
   start_date                 DateTime @db.Date
   end_date                   DateTime @db.Date
@@ -463,20 +463,20 @@ model hs_hr_pay_period {
   timesheet_aproval_due_date DateTime @db.Date
 }
 
-model hs_hr_payperiod {
-  payperiod_code        String                  @id @default("") @db.VarChar(13)
-  payperiod_name        String?                 @db.VarChar(100)
-  hs_hr_emp_basicsalary hs_hr_emp_basicsalary[]
+model payperiod {
+  payperiod_code  String            @id @default("") @db.VarChar(13)
+  payperiod_name  String?           @db.VarChar(100)
+  emp_basicsalary emp_basicsalary[]
 }
 
-model hs_hr_province {
+model province {
   id            Int    @id @default(autoincrement())
   province_name String @default("") @db.VarChar(40)
   province_code String @default("") @db.Char(2)
   cou_code      String @default("us") @db.Char(2)
 }
 
-model hs_hr_unique_id {
+model unique_id {
   id         Int    @id @default(autoincrement())
   last_id    Int    @db.UnsignedInt
   table_name String @db.VarChar(50)
@@ -485,13 +485,13 @@ model hs_hr_unique_id {
   @@unique([table_name, field_name], map: "table_field")
 }
 
-model ohrm_advanced_report {
+model advanced_report {
   id         Int    @id
   name       String @db.VarChar(100)
   definition String @db.LongText
 }
 
-model ohrm_attendance_record {
+model attendance_record {
   id                    BigInt    @id @default(autoincrement())
   employee_id           BigInt
   punch_in_utc_time     DateTime? @db.DateTime(0)
@@ -508,301 +508,301 @@ model ohrm_attendance_record {
   @@index([employee_id, punch_in_utc_time, punch_out_utc_time], map: "emp_id_time")
 }
 
-model ohrm_auth_provider_extra_details {
-  id                   Int                  @id @default(autoincrement())
-  provider_id          Int
-  provider_type        Int?
-  client_id            String?              @db.Text
-  client_secret        String?              @db.Text
-  developer_key        String?              @db.Text
-  ohrm_openid_provider ohrm_openid_provider @relation(fields: [provider_id], references: [id], onDelete: Cascade, map: "ohrm_auth_provider_extra_details_ibfk_1")
+model auth_provider_extra_details {
+  id              Int             @id @default(autoincrement())
+  provider_id     Int
+  provider_type   Int?
+  client_id       String?         @db.Text
+  client_secret   String?         @db.Text
+  developer_key   String?         @db.Text
+  openid_provider openid_provider @relation(fields: [provider_id], references: [id], onDelete: Cascade, map: "auth_provider_extra_details_ibfk_1")
 
   @@index([provider_id], map: "provider_id")
 }
 
-model ohrm_available_group_field {
-  report_group_id  BigInt
-  group_field_id   BigInt
-  ohrm_group_field ohrm_group_field @relation(fields: [group_field_id], references: [group_field_id], onUpdate: Restrict, map: "ohrm_available_group_field_ibfk_1")
+model available_group_field {
+  report_group_id BigInt
+  group_field_id  BigInt
+  group_field     group_field @relation(fields: [group_field_id], references: [group_field_id], onUpdate: Restrict, map: "available_group_field_ibfk_1")
 
   @@id([report_group_id, group_field_id])
   @@index([group_field_id], map: "group_field_id")
   @@index([report_group_id], map: "report_group_id")
 }
 
-model ohrm_beacon_notification {
+model beacon_notification {
   id          Int      @id @default(autoincrement())
   name        String   @db.VarChar(100)
   expiry_date DateTime @db.Timestamp(0)
   definition  String   @db.LongText
 }
 
-model ohrm_buzz_comment {
-  id                          BigInt                        @id @default(autoincrement())
-  share_id                    BigInt
-  employee_number             Int?
-  number_of_likes             Int?
-  number_of_unlikes           Int?
-  comment_text                String?                       @db.Text
-  comment_time                DateTime                      @db.DateTime(0)
-  updated_at                  DateTime?                     @default(now()) @db.Timestamp(0)
-  ohrm_buzz_share             ohrm_buzz_share               @relation(fields: [share_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzComentOnShare")
-  hs_hr_employee              hs_hr_employee?               @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzComentedEmployee")
-  ohrm_buzz_like_on_comment   ohrm_buzz_like_on_comment[]
-  ohrm_buzz_unlike_on_comment ohrm_buzz_unlike_on_comment[]
+model buzz_comment {
+  id                     BigInt                   @id @default(autoincrement())
+  share_id               BigInt
+  employee_number        Int?
+  number_of_likes        Int?
+  number_of_unlikes      Int?
+  comment_text           String?                  @db.Text
+  comment_time           DateTime                 @db.DateTime(0)
+  updated_at             DateTime?                @default(now()) @db.Timestamp(0)
+  buzz_share             buzz_share               @relation(fields: [share_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzComentOnShare")
+  employee               employee?                @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzComentedEmployee")
+  buzz_like_on_comment   buzz_like_on_comment[]
+  buzz_unlike_on_comment buzz_unlike_on_comment[]
 
   @@index([employee_number], map: "employee_number")
   @@index([share_id], map: "share_id")
 }
 
-model ohrm_buzz_like_on_comment {
-  id                BigInt            @id @default(autoincrement())
-  comment_id        BigInt
-  employee_number   Int?
-  like_time         DateTime          @db.DateTime(0)
-  hs_hr_employee    hs_hr_employee?   @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzCommentLikeEmployee")
-  ohrm_buzz_comment ohrm_buzz_comment @relation(fields: [comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzLikeOnComment")
+model buzz_like_on_comment {
+  id              BigInt       @id @default(autoincrement())
+  comment_id      BigInt
+  employee_number Int?
+  like_time       DateTime     @db.DateTime(0)
+  employee        employee?    @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzCommentLikeEmployee")
+  buzz_comment    buzz_comment @relation(fields: [comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzLikeOnComment")
 
   @@index([comment_id], map: "comment_id")
   @@index([employee_number], map: "employee_number")
 }
 
-model ohrm_buzz_like_on_share {
-  id              BigInt          @id @default(autoincrement())
+model buzz_like_on_share {
+  id              BigInt     @id @default(autoincrement())
   share_id        BigInt
   employee_number Int?
-  like_time       DateTime        @db.DateTime(0)
-  ohrm_buzz_share ohrm_buzz_share @relation(fields: [share_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzLikeOnshare")
-  hs_hr_employee  hs_hr_employee? @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzShareLikeEmployee")
+  like_time       DateTime   @db.DateTime(0)
+  buzz_share      buzz_share @relation(fields: [share_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzLikeOnshare")
+  employee        employee?  @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzShareLikeEmployee")
 
   @@index([employee_number], map: "employee_number")
   @@index([share_id], map: "share_id")
 }
 
-model ohrm_buzz_link {
-  id             BigInt         @id @default(autoincrement())
-  post_id        BigInt
-  link           String         @db.Text
-  type           Int?           @db.TinyInt
-  title          String?        @db.VarChar(600)
-  description    String?        @db.Text
-  ohrm_buzz_post ohrm_buzz_post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "linkAttached")
+model buzz_link {
+  id          BigInt    @id @default(autoincrement())
+  post_id     BigInt
+  link        String    @db.Text
+  type        Int?      @db.TinyInt
+  title       String?   @db.VarChar(600)
+  description String?   @db.Text
+  buzz_post   buzz_post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "linkAttached")
 
   @@index([post_id], map: "attachment_id")
   @@index([post_id], map: "photo_id")
 }
 
-model ohrm_buzz_notification_metadata {
-  emp_number                  Int            @id
-  last_notification_view_time DateTime?      @db.DateTime(0)
-  last_buzz_view_time         DateTime?      @db.DateTime(0)
-  last_clear_notifications    DateTime?      @db.DateTime(0)
-  hs_hr_employee              hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "notificationMetadata")
+model buzz_notification_metadata {
+  emp_number                  Int       @id
+  last_notification_view_time DateTime? @db.DateTime(0)
+  last_buzz_view_time         DateTime? @db.DateTime(0)
+  last_clear_notifications    DateTime? @db.DateTime(0)
+  employee                    employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "notificationMetadata")
 }
 
-model ohrm_buzz_photo {
-  id             BigInt         @id @default(autoincrement())
-  post_id        BigInt
-  photo          Bytes?         @db.MediumBlob
-  filename       String?        @db.VarChar(100)
-  file_type      String?        @db.VarChar(50)
-  size           String?        @db.VarChar(20)
-  width          String?        @db.VarChar(20)
-  height         String?        @db.VarChar(20)
-  ohrm_buzz_post ohrm_buzz_post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "photoAttached")
+model buzz_photo {
+  id        BigInt    @id @default(autoincrement())
+  post_id   BigInt
+  photo     Bytes?    @db.MediumBlob
+  filename  String?   @db.VarChar(100)
+  file_type String?   @db.VarChar(50)
+  size      String?   @db.VarChar(20)
+  width     String?   @db.VarChar(20)
+  height    String?   @db.VarChar(20)
+  buzz_post buzz_post @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "photoAttached")
 
   @@index([post_id], map: "attachment_id")
 }
 
-model ohrm_buzz_post {
-  id              BigInt            @id @default(autoincrement())
+model buzz_post {
+  id              BigInt       @id @default(autoincrement())
   employee_number Int?
-  text            String?           @db.Text
-  post_time       DateTime          @db.DateTime(0)
-  updated_at      DateTime?         @default(now()) @db.Timestamp(0)
-  ohrm_buzz_link  ohrm_buzz_link[]
-  ohrm_buzz_photo ohrm_buzz_photo[]
-  hs_hr_employee  hs_hr_employee?   @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzPostEmployee")
-  ohrm_buzz_share ohrm_buzz_share[]
+  text            String?      @db.Text
+  post_time       DateTime     @db.DateTime(0)
+  updated_at      DateTime?    @default(now()) @db.Timestamp(0)
+  buzz_link       buzz_link[]
+  buzz_photo      buzz_photo[]
+  employee        employee?    @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzPostEmployee")
+  buzz_share      buzz_share[]
 
   @@index([employee_number], map: "employee_number")
 }
 
-model ohrm_buzz_share {
-  id                        BigInt                      @id @default(autoincrement())
-  post_id                   BigInt
-  employee_number           Int?
-  number_of_likes           Int?
-  number_of_unlikes         Int?
-  number_of_comments        Int?
-  share_time                DateTime                    @db.DateTime(0)
-  type                      Boolean?
-  text                      String?                     @db.Text
-  updated_at                DateTime?                   @default(now()) @db.Timestamp(0)
-  ohrm_buzz_comment         ohrm_buzz_comment[]
-  ohrm_buzz_like_on_share   ohrm_buzz_like_on_share[]
-  hs_hr_employee            hs_hr_employee?             @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzShareEmployee")
-  ohrm_buzz_post            ohrm_buzz_post              @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzSharePost")
-  ohrm_buzz_unlike_on_share ohrm_buzz_unlike_on_share[]
+model buzz_share {
+  id                   BigInt                 @id @default(autoincrement())
+  post_id              BigInt
+  employee_number      Int?
+  number_of_likes      Int?
+  number_of_unlikes    Int?
+  number_of_comments   Int?
+  share_time           DateTime               @db.DateTime(0)
+  type                 Boolean?
+  text                 String?                @db.Text
+  updated_at           DateTime?              @default(now()) @db.Timestamp(0)
+  buzz_comment         buzz_comment[]
+  buzz_like_on_share   buzz_like_on_share[]
+  employee             employee?              @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzShareEmployee")
+  buzz_post            buzz_post              @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzSharePost")
+  buzz_unlike_on_share buzz_unlike_on_share[]
 
   @@index([employee_number], map: "employee_number")
   @@index([post_id], map: "post_id")
 }
 
-model ohrm_buzz_unlike_on_comment {
-  id                BigInt            @id @default(autoincrement())
-  comment_id        BigInt
-  employee_number   Int?
-  like_time         DateTime          @db.DateTime(0)
-  hs_hr_employee    hs_hr_employee?   @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzCommentUnLikeEmployee")
-  ohrm_buzz_comment ohrm_buzz_comment @relation(fields: [comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzUnLikeOnComment")
+model buzz_unlike_on_comment {
+  id              BigInt       @id @default(autoincrement())
+  comment_id      BigInt
+  employee_number Int?
+  like_time       DateTime     @db.DateTime(0)
+  employee        employee?    @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzCommentUnLikeEmployee")
+  buzz_comment    buzz_comment @relation(fields: [comment_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzUnLikeOnComment")
 
   @@index([comment_id], map: "comment_id")
   @@index([employee_number], map: "employee_number")
 }
 
-model ohrm_buzz_unlike_on_share {
-  id              BigInt          @id @default(autoincrement())
+model buzz_unlike_on_share {
+  id              BigInt     @id @default(autoincrement())
   share_id        BigInt
   employee_number Int?
-  like_time       DateTime        @db.DateTime(0)
-  hs_hr_employee  hs_hr_employee? @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzShareUnLikeEmployee")
-  ohrm_buzz_share ohrm_buzz_share @relation(fields: [share_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzUNLikeOnshare")
+  like_time       DateTime   @db.DateTime(0)
+  employee        employee?  @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: NoAction, map: "buzzShareUnLikeEmployee")
+  buzz_share      buzz_share @relation(fields: [share_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "buzzUNLikeOnshare")
 
   @@index([employee_number], map: "employee_number")
   @@index([share_id], map: "share_id")
 }
 
-model ohrm_composite_display_field {
-  composite_display_field_id            BigInt                                  @id @default(autoincrement())
-  report_group_id                       BigInt
-  name                                  String                                  @db.VarChar(1000)
-  label                                 String                                  @db.VarChar(255)
-  field_alias                           String?                                 @db.VarChar(255)
-  is_sortable                           String                                  @db.VarChar(10)
-  sort_order                            String?                                 @db.VarChar(255)
-  sort_field                            String?                                 @db.VarChar(255)
-  element_type                          String                                  @db.VarChar(255)
-  element_property                      String                                  @db.VarChar(1000)
-  width                                 String                                  @db.VarChar(255)
-  is_exportable                         String?                                 @db.VarChar(10)
-  text_alignment_style                  String?                                 @db.VarChar(20)
-  is_value_list                         Boolean                                 @default(false)
-  display_field_group_id                Int?                                    @db.UnsignedInt
-  default_value                         String?                                 @db.VarChar(255)
-  is_encrypted                          Boolean                                 @default(false)
-  is_meta                               Boolean                                 @default(false)
-  ohrm_report_group                     ohrm_report_group                       @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_composite_display_field_ibfk_1")
-  ohrm_display_field_group              ohrm_display_field_group?               @relation(fields: [display_field_group_id], references: [id], onUpdate: Restrict, map: "ohrm_composite_display_field_ibfk_2")
-  ohrm_selected_composite_display_field ohrm_selected_composite_display_field[]
+model composite_display_field {
+  composite_display_field_id       BigInt                             @id @default(autoincrement())
+  report_group_id                  BigInt
+  name                             String                             @db.VarChar(1000)
+  label                            String                             @db.VarChar(255)
+  field_alias                      String?                            @db.VarChar(255)
+  is_sortable                      String                             @db.VarChar(10)
+  sort_order                       String?                            @db.VarChar(255)
+  sort_field                       String?                            @db.VarChar(255)
+  element_type                     String                             @db.VarChar(255)
+  element_property                 String                             @db.VarChar(1000)
+  width                            String                             @db.VarChar(255)
+  is_exportable                    String?                            @db.VarChar(10)
+  text_alignment_style             String?                            @db.VarChar(20)
+  is_value_list                    Boolean                            @default(false)
+  display_field_group_id           Int?                               @db.UnsignedInt
+  default_value                    String?                            @db.VarChar(255)
+  is_encrypted                     Boolean                            @default(false)
+  is_meta                          Boolean                            @default(false)
+  report_group                     report_group                       @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "composite_display_field_ibfk_1")
+  display_field_group              display_field_group?               @relation(fields: [display_field_group_id], references: [id], onUpdate: Restrict, map: "composite_display_field_ibfk_2")
+  selected_composite_display_field selected_composite_display_field[]
 
   @@index([display_field_group_id], map: "display_field_group_id")
   @@index([report_group_id], map: "report_group_id")
 }
 
-model ohrm_customer {
+model customer {
   customer_id Int      @id @default(autoincrement())
   name        String   @db.VarChar(100)
   description String?  @db.VarChar(255)
   is_deleted  Boolean? @default(false)
 }
 
-model ohrm_data_group {
-  id                        Int                         @id @default(autoincrement())
-  name                      String                      @unique(map: "name") @db.VarChar(255)
-  description               String?                     @db.VarChar(255)
-  can_read                  Int?                        @db.TinyInt
-  can_create                Int?                        @db.TinyInt
-  can_update                Int?                        @db.TinyInt
-  can_delete                Int?                        @db.TinyInt
-  ohrm_data_group_screen    ohrm_data_group_screen[]
-  ohrm_user_role_data_group ohrm_user_role_data_group[]
+model data_group {
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @unique(map: "name") @db.VarChar(255)
+  description          String?                @db.VarChar(255)
+  can_read             Int?                   @db.TinyInt
+  can_create           Int?                   @db.TinyInt
+  can_update           Int?                   @db.TinyInt
+  can_delete           Int?                   @db.TinyInt
+  data_group_screen    data_group_screen[]
+  user_role_data_group user_role_data_group[]
 }
 
-model ohrm_data_group_screen {
-  id              Int              @id @default(autoincrement())
-  data_group_id   Int?
-  screen_id       Int?
-  permission      Int?
-  ohrm_data_group ohrm_data_group? @relation(fields: [data_group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_data_group_screen_ibfk_1")
-  ohrm_screen     ohrm_screen?     @relation(fields: [screen_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_data_group_screen_ibfk_2")
+model data_group_screen {
+  id            Int         @id @default(autoincrement())
+  data_group_id Int?
+  screen_id     Int?
+  permission    Int?
+  data_group    data_group? @relation(fields: [data_group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "data_group_screen_ibfk_1")
+  screen        screen?     @relation(fields: [screen_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "data_group_screen_ibfk_2")
 
   @@index([data_group_id], map: "data_group_id")
   @@index([screen_id], map: "screen_id")
 }
 
-model ohrm_datapoint {
-  id                  Int                 @id @default(autoincrement())
-  name                String?             @db.VarChar(100)
-  datapoint_type_id   Int
-  definition          String              @db.LongText
-  ohrm_datapoint_type ohrm_datapoint_type @relation(fields: [datapoint_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_datapoint_ibfk_1")
+model datapoint {
+  id                Int            @id @default(autoincrement())
+  name              String?        @db.VarChar(100)
+  datapoint_type_id Int
+  definition        String         @db.LongText
+  datapoint_type    datapoint_type @relation(fields: [datapoint_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "datapoint_ibfk_1")
 
   @@index([datapoint_type_id], map: "datapoint_type_id")
 }
 
-model ohrm_datapoint_type {
-  id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(100)
-  action_class   String           @db.VarChar(100)
-  ohrm_datapoint ohrm_datapoint[]
+model datapoint_type {
+  id           Int         @id @default(autoincrement())
+  name         String      @db.VarChar(100)
+  action_class String      @db.VarChar(100)
+  datapoint    datapoint[]
 }
 
-model ohrm_display_field {
-  display_field_id            BigInt                        @id @default(autoincrement())
-  report_group_id             BigInt
-  name                        String                        @db.VarChar(255)
-  label                       String                        @db.VarChar(255)
-  field_alias                 String?                       @db.VarChar(255)
-  is_sortable                 String                        @db.VarChar(10)
-  sort_order                  String?                       @db.VarChar(255)
-  sort_field                  String?                       @db.VarChar(255)
-  element_type                String                        @db.VarChar(255)
-  element_property            String                        @db.VarChar(1000)
-  width                       String                        @db.VarChar(255)
-  is_exportable               String?                       @db.VarChar(10)
-  text_alignment_style        String?                       @db.VarChar(20)
-  is_value_list               Boolean                       @default(false)
-  display_field_group_id      Int?                          @db.UnsignedInt
-  default_value               String?                       @db.VarChar(255)
-  is_encrypted                Boolean                       @default(false)
-  is_meta                     Boolean                       @default(false)
-  ohrm_report_group           ohrm_report_group             @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_display_field_ibfk_1")
-  ohrm_display_field_group    ohrm_display_field_group?     @relation(fields: [display_field_group_id], references: [id], onUpdate: Restrict, map: "ohrm_display_field_ibfk_2")
-  ohrm_selected_display_field ohrm_selected_display_field[]
+model display_field {
+  display_field_id       BigInt                   @id @default(autoincrement())
+  report_group_id        BigInt
+  name                   String                   @db.VarChar(255)
+  label                  String                   @db.VarChar(255)
+  field_alias            String?                  @db.VarChar(255)
+  is_sortable            String                   @db.VarChar(10)
+  sort_order             String?                  @db.VarChar(255)
+  sort_field             String?                  @db.VarChar(255)
+  element_type           String                   @db.VarChar(255)
+  element_property       String                   @db.VarChar(1000)
+  width                  String                   @db.VarChar(255)
+  is_exportable          String?                  @db.VarChar(10)
+  text_alignment_style   String?                  @db.VarChar(20)
+  is_value_list          Boolean                  @default(false)
+  display_field_group_id Int?                     @db.UnsignedInt
+  default_value          String?                  @db.VarChar(255)
+  is_encrypted           Boolean                  @default(false)
+  is_meta                Boolean                  @default(false)
+  report_group           report_group             @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "display_field_ibfk_1")
+  display_field_group    display_field_group?     @relation(fields: [display_field_group_id], references: [id], onUpdate: Restrict, map: "display_field_ibfk_2")
+  selected_display_field selected_display_field[]
 
   @@index([display_field_group_id], map: "display_field_group_id")
   @@index([report_group_id], map: "report_group_id")
 }
 
-model ohrm_display_field_group {
-  id                                Int                                 @id @default(autoincrement()) @db.UnsignedInt
-  report_group_id                   BigInt
-  name                              String                              @db.VarChar(255)
-  is_list                           Boolean                             @default(false)
-  ohrm_composite_display_field      ohrm_composite_display_field[]
-  ohrm_display_field                ohrm_display_field[]
-  ohrm_report_group                 ohrm_report_group                   @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_display_field_group_ibfk_1")
-  ohrm_selected_display_field_group ohrm_selected_display_field_group[]
-  ohrm_summary_display_field        ohrm_summary_display_field[]
+model display_field_group {
+  id                           Int                            @id @default(autoincrement()) @db.UnsignedInt
+  report_group_id              BigInt
+  name                         String                         @db.VarChar(255)
+  is_list                      Boolean                        @default(false)
+  composite_display_field      composite_display_field[]
+  display_field                display_field[]
+  report_group                 report_group                   @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "display_field_group_ibfk_1")
+  selected_display_field_group selected_display_field_group[]
+  summary_display_field        summary_display_field[]
 
   @@index([report_group_id], map: "report_group_id")
 }
 
-model ohrm_education {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @db.VarChar(100)
-  ohrm_emp_education ohrm_emp_education[]
+model education {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  emp_education emp_education[]
 }
 
-model ohrm_email {
-  id                   Int                    @id @default(autoincrement())
-  name                 String                 @unique(map: "name") @db.VarChar(100)
-  ohrm_email_processor ohrm_email_processor[]
-  ohrm_email_template  ohrm_email_template[]
+model email {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique(map: "name") @db.VarChar(100)
+  email_processor email_processor[]
+  email_template  email_template[]
 }
 
-model ohrm_email_configuration {
+model email_configuration {
   id                 Int     @id @default(autoincrement())
   mail_type          String? @db.VarChar(50)
   sent_as            String  @db.VarChar(250)
@@ -814,102 +814,102 @@ model ohrm_email_configuration {
   smtp_security_type String? @db.VarChar(50)
 }
 
-model ohrm_email_notification {
-  id                    Int                     @id @default(autoincrement())
-  name                  String                  @db.VarChar(100)
-  is_enable             Int
-  ohrm_email_subscriber ohrm_email_subscriber[]
+model email_notification {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar(100)
+  is_enable        Int
+  email_subscriber email_subscriber[]
 }
 
-model ohrm_email_processor {
-  id         Int        @id @default(autoincrement())
+model email_processor {
+  id         Int     @id @default(autoincrement())
   email_id   Int
-  class_name String?    @db.VarChar(100)
-  ohrm_email ohrm_email @relation(fields: [email_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_email_processor_ibfk_1")
+  class_name String? @db.VarChar(100)
+  email      email   @relation(fields: [email_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "email_processor_ibfk_1")
 
   @@index([email_id], map: "email_id")
 }
 
-model ohrm_email_subscriber {
-  id                      Int                     @id @default(autoincrement())
-  notification_id         Int
-  name                    String                  @db.VarChar(100)
-  email                   String                  @db.VarChar(100)
-  ohrm_email_notification ohrm_email_notification @relation(fields: [notification_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_email_subscriber_ibfk_1")
+model email_subscriber {
+  id                 Int                @id @default(autoincrement())
+  notification_id    Int
+  name               String             @db.VarChar(100)
+  email              String             @db.VarChar(100)
+  email_notification email_notification @relation(fields: [notification_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "email_subscriber_ibfk_1")
 
   @@index([notification_id], map: "notification_id")
 }
 
-model ohrm_email_template {
-  id             Int        @id @default(autoincrement())
+model email_template {
+  id             Int     @id @default(autoincrement())
   email_id       Int
-  locale         String?    @db.VarChar(20)
-  performer_role String?    @db.VarChar(50)
-  recipient_role String?    @db.VarChar(50)
-  subject        String?    @db.VarChar(255)
-  body           String?    @db.Text
-  ohrm_email     ohrm_email @relation(fields: [email_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_email_template_ibfk_1")
+  locale         String? @db.VarChar(20)
+  performer_role String? @db.VarChar(50)
+  recipient_role String? @db.VarChar(50)
+  subject        String? @db.VarChar(255)
+  body           String? @db.Text
+  email          email   @relation(fields: [email_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "email_template_ibfk_1")
 
   @@index([email_id], map: "email_id")
 }
 
-model ohrm_emp_education {
-  id             Int            @id @default(autoincrement())
-  emp_number     Int
-  education_id   Int
-  institute      String?        @db.VarChar(100)
-  major          String?        @db.VarChar(100)
-  year           Decimal?       @db.Decimal(4, 0)
-  score          String?        @db.VarChar(25)
-  start_date     DateTime?      @db.Date
-  end_date       DateTime?      @db.Date
-  hs_hr_employee hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_emp_education_ibfk_1")
-  ohrm_education ohrm_education @relation(fields: [education_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_emp_education_ibfk_2")
+model emp_education {
+  id           Int       @id @default(autoincrement())
+  emp_number   Int
+  education_id Int
+  institute    String?   @db.VarChar(100)
+  major        String?   @db.VarChar(100)
+  year         Decimal?  @db.Decimal(4, 0)
+  score        String?   @db.VarChar(25)
+  start_date   DateTime? @db.Date
+  end_date     DateTime? @db.Date
+  employee     employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_education_ibfk_1")
+  education    education @relation(fields: [education_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_education_ibfk_2")
 
   @@index([education_id], map: "education_id")
   @@index([emp_number], map: "emp_number")
 }
 
-model ohrm_emp_license {
+model emp_license {
   emp_number          Int
   license_id          Int
-  license_no          String?        @db.VarChar(50)
-  license_issued_date DateTime?      @db.Date
-  license_expiry_date DateTime?      @db.Date
-  hs_hr_employee      hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_emp_license_ibfk_1")
-  ohrm_license        ohrm_license   @relation(fields: [license_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_emp_license_ibfk_2")
+  license_no          String?   @db.VarChar(50)
+  license_issued_date DateTime? @db.Date
+  license_expiry_date DateTime? @db.Date
+  employee            employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_license_ibfk_1")
+  license             license   @relation(fields: [license_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "emp_license_ibfk_2")
 
   @@id([emp_number, license_id])
   @@index([license_id], map: "license_id")
 }
 
-model ohrm_emp_reporting_method {
-  reporting_method_id   Int                  @id @default(autoincrement())
-  reporting_method_name String               @db.VarChar(100)
-  hs_hr_emp_reportto    hs_hr_emp_reportto[]
+model emp_reporting_method {
+  reporting_method_id   Int            @id @default(autoincrement())
+  reporting_method_name String         @db.VarChar(100)
+  emp_reportto          emp_reportto[]
 }
 
-model ohrm_emp_termination {
-  id                                                                 Int                          @id @default(autoincrement())
-  emp_number                                                         Int?
-  reason_id                                                          Int?
-  termination_date                                                   DateTime                     @db.Date
-  note                                                               String?                      @db.VarChar(255)
-  hs_hr_employee_hs_hr_employee_termination_idToohrm_emp_termination hs_hr_employee[]             @relation("hs_hr_employee_termination_idToohrm_emp_termination")
-  ohrm_emp_termination_reason                                        ohrm_emp_termination_reason? @relation(fields: [reason_id], references: [id], onUpdate: Restrict, map: "ohrm_emp_termination_ibfk_1")
-  hs_hr_employee_ohrm_emp_termination_emp_numberTohs_hr_employee     hs_hr_employee?              @relation("ohrm_emp_termination_emp_numberTohs_hr_employee", fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_emp_termination_ibfk_2")
+model emp_termination {
+  id                                                Int                     @id @default(autoincrement())
+  emp_number                                        Int?
+  reason_id                                         Int?
+  termination_date                                  DateTime                @db.Date
+  note                                              String?                 @db.VarChar(255)
+  employee_employee_termination_idToemp_termination employee[]              @relation("employee_termination_idToemp_termination")
+  emp_termination_reason                            emp_termination_reason? @relation(fields: [reason_id], references: [id], onUpdate: Restrict, map: "emp_termination_ibfk_1")
+  employee_emp_termination_emp_numberToemployee     employee?               @relation("emp_termination_emp_numberToemployee", fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "emp_termination_ibfk_2")
 
   @@index([emp_number], map: "emp_number")
   @@index([reason_id], map: "reason_id")
 }
 
-model ohrm_emp_termination_reason {
-  id                   Int                    @id @default(autoincrement())
-  name                 String?                @db.VarChar(100)
-  ohrm_emp_termination ohrm_emp_termination[]
+model emp_termination_reason {
+  id              Int               @id @default(autoincrement())
+  name            String?           @db.VarChar(100)
+  emp_termination emp_termination[]
 }
 
-model ohrm_employee_event {
+model employee_event {
   event_id     Int       @id @default(autoincrement())
   employee_id  Int       @default(0)
   type         String?   @db.VarChar(45)
@@ -919,185 +919,185 @@ model ohrm_employee_event {
   created_by   String?   @db.VarChar(45)
 }
 
-model ohrm_employee_subscription {
+model employee_subscription {
   id          Int      @id @default(autoincrement()) @db.UnsignedInt
   employee_id Int
   status      Int      @db.SmallInt
   created_at  DateTime @db.Date
 }
 
-model ohrm_employee_work_shift {
-  work_shift_id   Int             @default(autoincrement())
-  emp_number      Int
-  ohrm_work_shift ohrm_work_shift @relation(fields: [work_shift_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_employee_work_shift_ibfk_1")
-  hs_hr_employee  hs_hr_employee  @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_employee_work_shift_ibfk_2")
+model employee_work_shift {
+  work_shift_id Int        @default(autoincrement())
+  emp_number    Int
+  work_shift    work_shift @relation(fields: [work_shift_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "employee_work_shift_ibfk_1")
+  employee      employee   @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "employee_work_shift_ibfk_2")
 
   @@id([work_shift_id, emp_number])
   @@index([emp_number], map: "emp_number")
 }
 
-model ohrm_employment_status {
-  id                   Int                    @id @default(autoincrement())
-  name                 String                 @db.VarChar(60)
-  hs_hr_employee       hs_hr_employee[]
-  hs_hr_jobtit_empstat hs_hr_jobtit_empstat[]
+model employment_status {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(60)
+  employee       employee[]
+  jobtit_empstat jobtit_empstat[]
 }
 
-model ohrm_filter_field {
-  filter_field_id            BigInt                       @id
-  report_group_id            BigInt
-  name                       String                       @db.VarChar(255)
-  where_clause_part          String                       @db.MediumText
-  filter_field_widget        String?                      @db.VarChar(255)
-  condition_no               Int
-  required                   String?                      @db.VarChar(10)
-  ohrm_report_group          ohrm_report_group            @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_filter_field_ibfk_1")
-  ohrm_selected_filter_field ohrm_selected_filter_field[]
+model filter_field {
+  filter_field_id       BigInt                  @id
+  report_group_id       BigInt
+  name                  String                  @db.VarChar(255)
+  where_clause_part     String                  @db.MediumText
+  filter_field_widget   String?                 @db.VarChar(255)
+  condition_no          Int
+  required              String?                 @db.VarChar(10)
+  report_group          report_group            @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "filter_field_ibfk_1")
+  selected_filter_field selected_filter_field[]
 
   @@index([report_group_id], map: "report_group_id")
 }
 
-model ohrm_group_field {
-  group_field_id             BigInt                       @id
-  name                       String                       @db.VarChar(255)
-  group_by_clause            String                       @db.MediumText
-  group_field_widget         String?                      @db.VarChar(255)
-  ohrm_available_group_field ohrm_available_group_field[]
-  ohrm_selected_group_field  ohrm_selected_group_field[]
+model group_field {
+  group_field_id        BigInt                  @id
+  name                  String                  @db.VarChar(255)
+  group_by_clause       String                  @db.MediumText
+  group_field_widget    String?                 @db.VarChar(255)
+  available_group_field available_group_field[]
+  selected_group_field  selected_group_field[]
 }
 
-model ohrm_holiday {
-  id                       Int                       @id @default(autoincrement()) @db.UnsignedInt
-  description              String?                   @db.Text
-  date                     DateTime?                 @db.Date
-  recurring                Int?                      @default(0) @db.UnsignedTinyInt
-  length                   Int?                      @db.UnsignedInt
-  operational_country_id   Int?                      @db.UnsignedInt
-  ohrm_operational_country ohrm_operational_country? @relation(fields: [operational_country_id], references: [id], onDelete: Cascade, map: "fk_ohrm_holiday_ohrm_operational_country")
+model holiday {
+  id                     Int                  @id @default(autoincrement()) @db.UnsignedInt
+  description            String?              @db.Text
+  date                   DateTime?            @db.Date
+  recurring              Int?                 @default(0) @db.UnsignedTinyInt
+  length                 Int?                 @db.UnsignedInt
+  operational_country_id Int?                 @db.UnsignedInt
+  operational_country    operational_country? @relation(fields: [operational_country_id], references: [id], onDelete: Cascade, map: "fk_holiday_operational_country")
 
-  @@index([operational_country_id], map: "fk_ohrm_holiday_ohrm_operational_country")
+  @@index([operational_country_id], map: "fk_holiday_operational_country")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ohrm_home_page {
-  id             Int            @id @default(autoincrement())
-  user_role_id   Int
-  action         String?        @db.VarChar(255)
-  enable_class   String?        @db.VarChar(100)
-  priority       Int            @default(0)
-  ohrm_user_role ohrm_user_role @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_home_page_ibfk_1")
+model home_page {
+  id           Int       @id @default(autoincrement())
+  user_role_id Int
+  action       String?   @db.VarChar(255)
+  enable_class String?   @db.VarChar(100)
+  priority     Int       @default(0)
+  user_role    user_role @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "home_page_ibfk_1")
 
   @@index([user_role_id], map: "user_role_id")
 }
 
-model ohrm_i18n_group {
-  id                    Int                     @id @default(autoincrement())
-  name                  String?                 @db.VarChar(255)
-  title                 String?                 @db.VarChar(255)
-  ohrm_i18n_lang_string ohrm_i18n_lang_string[]
+model i18n_group {
+  id               Int                @id @default(autoincrement())
+  name             String?            @db.VarChar(255)
+  title            String?            @db.VarChar(255)
+  i18n_lang_string i18n_lang_string[]
 }
 
-model ohrm_i18n_lang_string {
-  id                  Int                   @id @default(autoincrement())
-  unit_id             Int
-  source_id           Int?
-  group_id            Int?
-  value               String                @db.Text
-  note                String?               @db.Text
-  version             String?               @db.VarChar(20)
-  ohrm_i18n_group     ohrm_i18n_group?      @relation(fields: [group_id], references: [id], onUpdate: Restrict, map: "groupId")
-  ohrm_i18n_source    ohrm_i18n_source?     @relation(fields: [source_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sourceId")
-  ohrm_i18n_translate ohrm_i18n_translate[]
+model i18n_lang_string {
+  id             Int              @id @default(autoincrement())
+  unit_id        Int
+  source_id      Int?
+  group_id       Int?
+  value          String           @db.Text
+  note           String?          @db.Text
+  version        String?          @db.VarChar(20)
+  i18n_group     i18n_group?      @relation(fields: [group_id], references: [id], onUpdate: Restrict, map: "groupId")
+  i18n_source    i18n_source?     @relation(fields: [source_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sourceId")
+  i18n_translate i18n_translate[]
 
   @@index([group_id], map: "groupId")
   @@index([source_id], map: "sourceId")
 }
 
-model ohrm_i18n_language {
-  id                  Int                   @id @default(autoincrement())
-  name                String?               @db.VarChar(255)
-  code                String                @unique(map: "code") @db.VarChar(100)
-  enabled             Int                   @default(1) @db.UnsignedTinyInt
-  added               Int                   @default(0) @db.UnsignedTinyInt
-  modified_at         DateTime?             @db.DateTime(0)
-  ohrm_i18n_translate ohrm_i18n_translate[]
+model i18n_language {
+  id             Int              @id @default(autoincrement())
+  name           String?          @db.VarChar(255)
+  code           String           @unique(map: "code") @db.VarChar(100)
+  enabled        Int              @default(1) @db.UnsignedTinyInt
+  added          Int              @default(0) @db.UnsignedTinyInt
+  modified_at    DateTime?        @db.DateTime(0)
+  i18n_translate i18n_translate[]
 }
 
-model ohrm_i18n_source {
-  id                    Int                     @id @default(autoincrement())
-  source                String                  @db.MediumText
-  modified_at           DateTime?               @db.DateTime(0)
-  ohrm_i18n_lang_string ohrm_i18n_lang_string[]
+model i18n_source {
+  id               Int                @id @default(autoincrement())
+  source           String             @db.MediumText
+  modified_at      DateTime?          @db.DateTime(0)
+  i18n_lang_string i18n_lang_string[]
 }
 
-model ohrm_i18n_translate {
-  id                    Int                   @id @default(autoincrement())
-  lang_string_id        Int
-  language_id           Int
-  value                 String?               @db.Text
-  translated            Int?                  @default(1) @db.UnsignedTinyInt
-  customized            Int?                  @default(0) @db.UnsignedTinyInt
-  modified_at           DateTime              @default(now()) @db.Timestamp(0)
-  ohrm_i18n_lang_string ohrm_i18n_lang_string @relation(fields: [lang_string_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "langStringId")
-  ohrm_i18n_language    ohrm_i18n_language    @relation(fields: [language_id], references: [id], onUpdate: Restrict, map: "languageId")
+model i18n_translate {
+  id               Int              @id @default(autoincrement())
+  lang_string_id   Int
+  language_id      Int
+  value            String?          @db.Text
+  translated       Int?             @default(1) @db.UnsignedTinyInt
+  customized       Int?             @default(0) @db.UnsignedTinyInt
+  modified_at      DateTime         @default(now()) @db.Timestamp(0)
+  i18n_lang_string i18n_lang_string @relation(fields: [lang_string_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "langStringId")
+  i18n_language    i18n_language    @relation(fields: [language_id], references: [id], onUpdate: Restrict, map: "languageId")
 
   @@unique([lang_string_id, language_id], map: "translateUniqueId")
   @@index([language_id], map: "languageId")
 }
 
-model ohrm_job_candidate {
-  id                            Int                             @id @default(autoincrement())
-  first_name                    String                          @db.VarChar(30)
-  middle_name                   String?                         @db.VarChar(30)
-  last_name                     String                          @db.VarChar(30)
-  email                         String                          @db.VarChar(100)
-  contact_number                String?                         @db.VarChar(30)
-  status                        Int
-  comment                       String?                         @db.Text
-  mode_of_application           Int
-  date_of_application           DateTime                        @db.Date
-  cv_file_id                    Int?
-  cv_text_version               String?                         @db.Text
-  keywords                      String?                         @db.VarChar(255)
-  added_person                  Int?
-  consent_to_keep_data          Boolean                         @default(false)
-  hs_hr_employee                hs_hr_employee?                 @relation(fields: [added_person], references: [emp_number], onUpdate: Restrict, map: "ohrm_job_candidate_ibfk_1")
-  ohrm_job_candidate_attachment ohrm_job_candidate_attachment[]
-  ohrm_job_candidate_history    ohrm_job_candidate_history[]
-  ohrm_job_candidate_vacancy    ohrm_job_candidate_vacancy[]
-  ohrm_job_interview            ohrm_job_interview[]
+model job_candidate {
+  id                       Int                        @id @default(autoincrement())
+  first_name               String                     @db.VarChar(30)
+  middle_name              String?                    @db.VarChar(30)
+  last_name                String                     @db.VarChar(30)
+  email                    String                     @db.VarChar(100)
+  contact_number           String?                    @db.VarChar(30)
+  status                   Int
+  comment                  String?                    @db.Text
+  mode_of_application      Int
+  date_of_application      DateTime                   @db.Date
+  cv_file_id               Int?
+  cv_text_version          String?                    @db.Text
+  keywords                 String?                    @db.VarChar(255)
+  added_person             Int?
+  consent_to_keep_data     Boolean                    @default(false)
+  employee                 employee?                  @relation(fields: [added_person], references: [emp_number], onUpdate: Restrict, map: "job_candidate_ibfk_1")
+  job_candidate_attachment job_candidate_attachment[]
+  job_candidate_history    job_candidate_history[]
+  job_candidate_vacancy    job_candidate_vacancy[]
+  job_interview            job_interview[]
 
   @@index([added_person], map: "added_person")
 }
 
-model ohrm_job_candidate_attachment {
-  id                 Int                @id @default(autoincrement())
-  candidate_id       Int
-  file_name          String             @db.VarChar(200)
-  file_type          String?            @db.VarChar(200)
-  file_size          Int
-  file_content       Bytes?             @db.MediumBlob
-  attachment_type    Int?
-  ohrm_job_candidate ohrm_job_candidate @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_candidate_attachment_ibfk_1")
+model job_candidate_attachment {
+  id              Int           @id @default(autoincrement())
+  candidate_id    Int
+  file_name       String        @db.VarChar(200)
+  file_type       String?       @db.VarChar(200)
+  file_size       Int
+  file_content    Bytes?        @db.MediumBlob
+  attachment_type Int?
+  job_candidate   job_candidate @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_candidate_attachment_ibfk_1")
 
   @@index([candidate_id], map: "candidate_id")
 }
 
-model ohrm_job_candidate_history {
-  id                     Int                 @id @default(autoincrement())
+model job_candidate_history {
+  id                     Int            @id @default(autoincrement())
   candidate_id           Int
   vacancy_id             Int?
-  candidate_vacancy_name String?             @db.VarChar(255)
+  candidate_vacancy_name String?        @db.VarChar(255)
   interview_id           Int?
   action                 Int
   performed_by           Int?
-  performed_date         DateTime            @db.DateTime(0)
-  note                   String?             @db.Text
-  interviewers           String?             @db.VarChar(255)
-  ohrm_job_candidate     ohrm_job_candidate  @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_candidate_history_ibfk_1")
-  ohrm_job_vacancy       ohrm_job_vacancy?   @relation(fields: [vacancy_id], references: [id], onUpdate: Restrict, map: "ohrm_job_candidate_history_ibfk_2")
-  ohrm_job_interview     ohrm_job_interview? @relation(fields: [interview_id], references: [id], onUpdate: Restrict, map: "ohrm_job_candidate_history_ibfk_3")
-  hs_hr_employee         hs_hr_employee?     @relation(fields: [performed_by], references: [emp_number], onUpdate: Restrict, map: "ohrm_job_candidate_history_ibfk_4")
+  performed_date         DateTime       @db.DateTime(0)
+  note                   String?        @db.Text
+  interviewers           String?        @db.VarChar(255)
+  job_candidate          job_candidate  @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_candidate_history_ibfk_1")
+  job_vacancy            job_vacancy?   @relation(fields: [vacancy_id], references: [id], onUpdate: Restrict, map: "job_candidate_history_ibfk_2")
+  job_interview          job_interview? @relation(fields: [interview_id], references: [id], onUpdate: Restrict, map: "job_candidate_history_ibfk_3")
+  employee               employee?      @relation(fields: [performed_by], references: [emp_number], onUpdate: Restrict, map: "job_candidate_history_ibfk_4")
 
   @@index([candidate_id], map: "candidate_id")
   @@index([interview_id], map: "interview_id")
@@ -1105,128 +1105,128 @@ model ohrm_job_candidate_history {
   @@index([vacancy_id], map: "vacancy_id")
 }
 
-model ohrm_job_candidate_vacancy {
-  id                 Int                  @unique(map: "id") @default(autoincrement())
-  candidate_id       Int
-  vacancy_id         Int
-  status             String               @db.VarChar(100)
-  applied_date       DateTime             @db.Date
-  ohrm_job_candidate ohrm_job_candidate   @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_candidate_vacancy_ibfk_1")
-  ohrm_job_vacancy   ohrm_job_vacancy     @relation(fields: [vacancy_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_candidate_vacancy_ibfk_2")
-  ohrm_job_interview ohrm_job_interview[]
+model job_candidate_vacancy {
+  id            Int             @unique(map: "id") @default(autoincrement())
+  candidate_id  Int
+  vacancy_id    Int
+  status        String          @db.VarChar(100)
+  applied_date  DateTime        @db.Date
+  job_candidate job_candidate   @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_candidate_vacancy_ibfk_1")
+  job_vacancy   job_vacancy     @relation(fields: [vacancy_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_candidate_vacancy_ibfk_2")
+  job_interview job_interview[]
 
   @@id([candidate_id, vacancy_id])
   @@index([vacancy_id], map: "vacancy_id")
 }
 
-model ohrm_job_category {
-  id             Int              @id @default(autoincrement())
-  name           String?          @db.VarChar(60)
-  hs_hr_employee hs_hr_employee[]
+model job_category {
+  id       Int        @id @default(autoincrement())
+  name     String?    @db.VarChar(60)
+  employee employee[]
 }
 
-model ohrm_job_interview {
-  id                             Int                              @id @default(autoincrement())
-  candidate_vacancy_id           Int?
-  candidate_id                   Int?
-  interview_name                 String                           @db.VarChar(100)
-  interview_date                 DateTime?                        @db.Date
-  interview_time                 DateTime?                        @db.Time(0)
-  note                           String?                          @db.Text
-  ohrm_job_candidate_history     ohrm_job_candidate_history[]
-  ohrm_job_candidate_vacancy     ohrm_job_candidate_vacancy?      @relation(fields: [candidate_vacancy_id], references: [id], onUpdate: Restrict, map: "ohrm_job_interview_ibfk_1")
-  ohrm_job_candidate             ohrm_job_candidate?              @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_interview_ibfk_2")
-  ohrm_job_interview_attachment  ohrm_job_interview_attachment[]
-  ohrm_job_interview_interviewer ohrm_job_interview_interviewer[]
+model job_interview {
+  id                        Int                         @id @default(autoincrement())
+  candidate_vacancy_id      Int?
+  candidate_id              Int?
+  interview_name            String                      @db.VarChar(100)
+  interview_date            DateTime?                   @db.Date
+  interview_time            DateTime?                   @db.Time(0)
+  note                      String?                     @db.Text
+  job_candidate_history     job_candidate_history[]
+  job_candidate_vacancy     job_candidate_vacancy?      @relation(fields: [candidate_vacancy_id], references: [id], onUpdate: Restrict, map: "job_interview_ibfk_1")
+  job_candidate             job_candidate?              @relation(fields: [candidate_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_interview_ibfk_2")
+  job_interview_attachment  job_interview_attachment[]
+  job_interview_interviewer job_interview_interviewer[]
 
   @@index([candidate_id], map: "candidate_id")
   @@index([candidate_vacancy_id], map: "candidate_vacancy_id")
 }
 
-model ohrm_job_interview_attachment {
-  id                 Int                @id @default(autoincrement())
-  interview_id       Int
-  file_name          String             @db.VarChar(200)
-  file_type          String?            @db.VarChar(200)
-  file_size          Int
-  file_content       Bytes?             @db.MediumBlob
-  attachment_type    Int?
-  comment            String?            @db.VarChar(255)
-  ohrm_job_interview ohrm_job_interview @relation(fields: [interview_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_interview_attachment_ibfk_1")
+model job_interview_attachment {
+  id              Int           @id @default(autoincrement())
+  interview_id    Int
+  file_name       String        @db.VarChar(200)
+  file_type       String?       @db.VarChar(200)
+  file_size       Int
+  file_content    Bytes?        @db.MediumBlob
+  attachment_type Int?
+  comment         String?       @db.VarChar(255)
+  job_interview   job_interview @relation(fields: [interview_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_interview_attachment_ibfk_1")
 
   @@index([interview_id], map: "interview_id")
 }
 
-model ohrm_job_interview_interviewer {
-  interview_id       Int
-  interviewer_id     Int
-  ohrm_job_interview ohrm_job_interview @relation(fields: [interview_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_interview_interviewer_ibfk_1")
-  hs_hr_employee     hs_hr_employee     @relation(fields: [interviewer_id], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_interview_interviewer_ibfk_2")
+model job_interview_interviewer {
+  interview_id   Int
+  interviewer_id Int
+  job_interview  job_interview @relation(fields: [interview_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_interview_interviewer_ibfk_1")
+  employee       employee      @relation(fields: [interviewer_id], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "job_interview_interviewer_ibfk_2")
 
   @@id([interview_id, interviewer_id])
   @@index([interviewer_id], map: "interviewer_id")
 }
 
-model ohrm_job_specification_attachment {
-  id             Int            @id @default(autoincrement())
-  job_title_id   Int
-  file_name      String         @db.VarChar(200)
-  file_type      String?        @db.VarChar(200)
-  file_size      Int
-  file_content   Bytes?         @db.MediumBlob
-  ohrm_job_title ohrm_job_title @relation(fields: [job_title_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_specification_attachment_ibfk_1")
+model job_specification_attachment {
+  id           Int       @id @default(autoincrement())
+  job_title_id Int
+  file_name    String    @db.VarChar(200)
+  file_type    String?   @db.VarChar(200)
+  file_size    Int
+  file_content Bytes?    @db.MediumBlob
+  job_title    job_title @relation(fields: [job_title_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_specification_attachment_ibfk_1")
 
   @@index([job_title_id], map: "job_title_id")
 }
 
-model ohrm_job_title {
-  id                                Int                                 @id @default(autoincrement())
-  job_title                         String                              @db.VarChar(100)
-  job_description                   String?                             @db.VarChar(400)
-  note                              String?                             @db.VarChar(400)
-  is_deleted                        Boolean?                            @default(false)
-  hs_hr_employee                    hs_hr_employee[]
-  hs_hr_jobtit_empstat              hs_hr_jobtit_empstat[]
-  ohrm_job_specification_attachment ohrm_job_specification_attachment[]
-  ohrm_job_vacancy                  ohrm_job_vacancy[]
+model job_title {
+  id                           Int                            @id @default(autoincrement())
+  job_title                    String                         @db.VarChar(100)
+  job_description              String?                        @db.VarChar(400)
+  note                         String?                        @db.VarChar(400)
+  is_deleted                   Boolean?                       @default(false)
+  employee                     employee[]
+  jobtit_empstat               jobtit_empstat[]
+  job_specification_attachment job_specification_attachment[]
+  job_vacancy                  job_vacancy[]
 }
 
-model ohrm_job_vacancy {
-  id                          Int                           @id @default(autoincrement())
-  job_title_code              Int
-  hiring_manager_id           Int?
-  name                        String                        @db.VarChar(100)
-  description                 String?                       @db.Text
-  no_of_positions             Int?
-  status                      Int
-  published_in_feed           Boolean                       @default(false)
-  defined_time                DateTime                      @db.DateTime(0)
-  updated_time                DateTime                      @db.DateTime(0)
-  ohrm_job_candidate_history  ohrm_job_candidate_history[]
-  ohrm_job_candidate_vacancy  ohrm_job_candidate_vacancy[]
-  ohrm_job_title              ohrm_job_title                @relation(fields: [job_title_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_vacancy_ibfk_1")
-  hs_hr_employee              hs_hr_employee?               @relation(fields: [hiring_manager_id], references: [emp_number], onUpdate: Restrict, map: "ohrm_job_vacancy_ibfk_2")
-  ohrm_job_vacancy_attachment ohrm_job_vacancy_attachment[]
+model job_vacancy {
+  id                     Int                      @id @default(autoincrement())
+  job_title_code         Int
+  hiring_manager_id      Int?
+  name                   String                   @db.VarChar(100)
+  description            String?                  @db.Text
+  no_of_positions        Int?
+  status                 Int
+  published_in_feed      Boolean                  @default(false)
+  defined_time           DateTime                 @db.DateTime(0)
+  updated_time           DateTime                 @db.DateTime(0)
+  job_candidate_history  job_candidate_history[]
+  job_candidate_vacancy  job_candidate_vacancy[]
+  job_title              job_title                @relation(fields: [job_title_code], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_vacancy_ibfk_1")
+  employee               employee?                @relation(fields: [hiring_manager_id], references: [emp_number], onUpdate: Restrict, map: "job_vacancy_ibfk_2")
+  job_vacancy_attachment job_vacancy_attachment[]
 
   @@index([hiring_manager_id], map: "hiring_manager_id")
   @@index([job_title_code], map: "job_title_code")
 }
 
-model ohrm_job_vacancy_attachment {
-  id               Int              @id @default(autoincrement())
-  vacancy_id       Int
-  file_name        String           @db.VarChar(200)
-  file_type        String?          @db.VarChar(200)
-  file_size        Int
-  file_content     Bytes?           @db.MediumBlob
-  attachment_type  Int?
-  comment          String?          @db.VarChar(255)
-  ohrm_job_vacancy ohrm_job_vacancy @relation(fields: [vacancy_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_job_vacancy_attachment_ibfk_1")
+model job_vacancy_attachment {
+  id              Int         @id @default(autoincrement())
+  vacancy_id      Int
+  file_name       String      @db.VarChar(200)
+  file_type       String?     @db.VarChar(200)
+  file_size       Int
+  file_content    Bytes?      @db.MediumBlob
+  attachment_type Int?
+  comment         String?     @db.VarChar(255)
+  job_vacancy     job_vacancy @relation(fields: [vacancy_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "job_vacancy_attachment_ibfk_1")
 
   @@index([vacancy_id], map: "vacancy_id")
 }
 
-model ohrm_kpi {
+model kpi {
   id             BigInt    @id @default(autoincrement())
   job_title_code String?   @db.VarChar(10)
   kpi_indicators String?   @db.VarChar(255)
@@ -1236,53 +1236,53 @@ model ohrm_kpi {
   deleted_at     DateTime? @db.DateTime(0)
 }
 
-model ohrm_language {
-  id                 Int                  @id @default(autoincrement())
-  name               String?              @db.VarChar(120)
-  hs_hr_emp_language hs_hr_emp_language[]
+model language {
+  id           Int            @id @default(autoincrement())
+  name         String?        @db.VarChar(120)
+  emp_language emp_language[]
 }
 
-model ohrm_leave {
-  id                           Int                            @id @default(autoincrement())
-  date                         DateTime?                      @db.Date
-  length_hours                 Decimal?                       @db.Decimal(6, 2)
-  length_days                  Decimal?                       @db.Decimal(6, 4)
-  status                       Int?                           @db.SmallInt
-  comments                     String?                        @db.VarChar(256)
-  leave_request_id             Int                            @db.UnsignedInt
-  leave_type_id                Int                            @db.UnsignedInt
-  emp_number                   Int
-  start_time                   DateTime?                      @db.Time(0)
-  end_time                     DateTime?                      @db.Time(0)
-  duration_type                Int                            @default(0) @db.TinyInt
-  ohrm_leave_request           ohrm_leave_request             @relation(fields: [leave_request_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_ibfk_1")
-  ohrm_leave_type              ohrm_leave_type                @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_ibfk_2")
-  ohrm_leave_comment           ohrm_leave_comment[]
-  ohrm_leave_leave_entitlement ohrm_leave_leave_entitlement[]
+model leave {
+  id                      Int                       @id @default(autoincrement())
+  date                    DateTime?                 @db.Date
+  length_hours            Decimal?                  @db.Decimal(6, 2)
+  length_days             Decimal?                  @db.Decimal(6, 4)
+  status                  Int?                      @db.SmallInt
+  comments                String?                   @db.VarChar(256)
+  leave_request_id        Int                       @db.UnsignedInt
+  leave_type_id           Int                       @db.UnsignedInt
+  emp_number              Int
+  start_time              DateTime?                 @db.Time(0)
+  end_time                DateTime?                 @db.Time(0)
+  duration_type           Int                       @default(0) @db.TinyInt
+  leave_request           leave_request             @relation(fields: [leave_request_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_ibfk_1")
+  leave_type              leave_type                @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_ibfk_2")
+  leave_comment           leave_comment[]
+  leave_leave_entitlement leave_leave_entitlement[]
 
   @@index([leave_request_id, leave_type_id, emp_number], map: "leave_request_type_emp")
   @@index([leave_type_id], map: "leave_type_id")
   @@index([leave_request_id, status], map: "request_status")
 }
 
-model ohrm_leave_adjustment {
-  id                                Int                                 @id @default(autoincrement()) @db.UnsignedInt
-  emp_number                        Int
-  no_of_days                        Decimal                             @db.Decimal(19, 15)
-  leave_type_id                     Int                                 @db.UnsignedInt
-  from_date                         DateTime?                           @db.DateTime(0)
-  to_date                           DateTime?                           @db.DateTime(0)
-  credited_date                     DateTime?                           @db.DateTime(0)
-  note                              String?                             @db.VarChar(255)
-  adjustment_type                   Int                                 @default(0) @db.UnsignedInt
-  deleted                           Boolean                             @default(false)
-  created_by_id                     Int?
-  created_by_name                   String?                             @db.VarChar(255)
-  ohrm_leave_type                   ohrm_leave_type                     @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_adjustment_ibfk_1")
-  hs_hr_employee                    hs_hr_employee                      @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_adjustment_ibfk_2")
-  ohrm_user                         ohrm_user?                          @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "ohrm_leave_adjustment_ibfk_3")
-  ohrm_leave_entitlement_type       ohrm_leave_entitlement_type         @relation(fields: [adjustment_type], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_adjustment_ibfk_4")
-  ohrm_leave_entitlement_adjustment ohrm_leave_entitlement_adjustment[]
+model leave_adjustment {
+  id                           Int                            @id @default(autoincrement()) @db.UnsignedInt
+  emp_number                   Int
+  no_of_days                   Decimal                        @db.Decimal(19, 15)
+  leave_type_id                Int                            @db.UnsignedInt
+  from_date                    DateTime?                      @db.DateTime(0)
+  to_date                      DateTime?                      @db.DateTime(0)
+  credited_date                DateTime?                      @db.DateTime(0)
+  note                         String?                        @db.VarChar(255)
+  adjustment_type              Int                            @default(0) @db.UnsignedInt
+  deleted                      Boolean                        @default(false)
+  created_by_id                Int?
+  created_by_name              String?                        @db.VarChar(255)
+  leave_type                   leave_type                     @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_adjustment_ibfk_1")
+  employee                     employee                       @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "leave_adjustment_ibfk_2")
+  user                         user?                          @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "leave_adjustment_ibfk_3")
+  leave_entitlement_type       leave_entitlement_type         @relation(fields: [adjustment_type], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_adjustment_ibfk_4")
+  leave_entitlement_adjustment leave_entitlement_adjustment[]
 
   @@index([adjustment_type], map: "adjustment_type")
   @@index([created_by_id], map: "created_by_id")
@@ -1290,43 +1290,43 @@ model ohrm_leave_adjustment {
   @@index([leave_type_id], map: "leave_type_id")
 }
 
-model ohrm_leave_comment {
-  id                    Int             @id @default(autoincrement())
+model leave_comment {
+  id                    Int       @id @default(autoincrement())
   leave_id              Int
-  created               DateTime?       @db.DateTime(0)
-  created_by_name       String          @db.VarChar(255)
+  created               DateTime? @db.DateTime(0)
+  created_by_name       String    @db.VarChar(255)
   created_by_id         Int?
   created_by_emp_number Int?
-  comments              String?         @db.VarChar(255)
-  ohrm_leave            ohrm_leave      @relation(fields: [leave_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_comment_ibfk_1")
-  ohrm_user             ohrm_user?      @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "ohrm_leave_comment_ibfk_2")
-  hs_hr_employee        hs_hr_employee? @relation(fields: [created_by_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_comment_ibfk_3")
+  comments              String?   @db.VarChar(255)
+  leave                 leave     @relation(fields: [leave_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_comment_ibfk_1")
+  user                  user?     @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "leave_comment_ibfk_2")
+  employee              employee? @relation(fields: [created_by_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "leave_comment_ibfk_3")
 
   @@index([created_by_emp_number], map: "created_by_emp_number")
   @@index([created_by_id], map: "created_by_id")
   @@index([leave_id], map: "leave_id")
 }
 
-model ohrm_leave_entitlement {
-  id                                Int                                 @id @default(autoincrement()) @db.UnsignedInt
-  emp_number                        Int
-  no_of_days                        Decimal                             @db.Decimal(19, 15)
-  days_used                         Decimal                             @default(0.0000) @db.Decimal(8, 4)
-  leave_type_id                     Int                                 @db.UnsignedInt
-  from_date                         DateTime                            @db.DateTime(0)
-  to_date                           DateTime?                           @db.DateTime(0)
-  credited_date                     DateTime?                           @db.DateTime(0)
-  note                              String?                             @db.VarChar(255)
-  entitlement_type                  Int                                 @db.UnsignedInt
-  deleted                           Boolean                             @default(false)
-  created_by_id                     Int?
-  created_by_name                   String?                             @db.VarChar(255)
-  ohrm_leave_type                   ohrm_leave_type                     @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_entitlement_ibfk_1")
-  hs_hr_employee                    hs_hr_employee                      @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_entitlement_ibfk_2")
-  ohrm_leave_entitlement_type       ohrm_leave_entitlement_type         @relation(fields: [entitlement_type], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_entitlement_ibfk_3")
-  ohrm_user                         ohrm_user?                          @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "ohrm_leave_entitlement_ibfk_4")
-  ohrm_leave_entitlement_adjustment ohrm_leave_entitlement_adjustment[]
-  ohrm_leave_leave_entitlement      ohrm_leave_leave_entitlement[]
+model leave_entitlement {
+  id                           Int                            @id @default(autoincrement()) @db.UnsignedInt
+  emp_number                   Int
+  no_of_days                   Decimal                        @db.Decimal(19, 15)
+  days_used                    Decimal                        @default(0.0000) @db.Decimal(8, 4)
+  leave_type_id                Int                            @db.UnsignedInt
+  from_date                    DateTime                       @db.DateTime(0)
+  to_date                      DateTime?                      @db.DateTime(0)
+  credited_date                DateTime?                      @db.DateTime(0)
+  note                         String?                        @db.VarChar(255)
+  entitlement_type             Int                            @db.UnsignedInt
+  deleted                      Boolean                        @default(false)
+  created_by_id                Int?
+  created_by_name              String?                        @db.VarChar(255)
+  leave_type                   leave_type                     @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_entitlement_ibfk_1")
+  employee                     employee                       @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "leave_entitlement_ibfk_2")
+  leave_entitlement_type       leave_entitlement_type         @relation(fields: [entitlement_type], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_entitlement_ibfk_3")
+  user                         user?                          @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "leave_entitlement_ibfk_4")
+  leave_entitlement_adjustment leave_entitlement_adjustment[]
+  leave_leave_entitlement      leave_leave_entitlement[]
 
   @@index([created_by_id], map: "created_by_id")
   @@index([emp_number], map: "emp_number")
@@ -1334,122 +1334,122 @@ model ohrm_leave_entitlement {
   @@index([leave_type_id], map: "leave_type_id")
 }
 
-model ohrm_leave_entitlement_adjustment {
-  id                     Int                    @id @default(autoincrement())
-  adjustment_id          Int                    @db.UnsignedInt
-  entitlement_id         Int                    @db.UnsignedInt
-  length_days            Decimal?               @db.Decimal(4, 2)
-  ohrm_leave_entitlement ohrm_leave_entitlement @relation(fields: [entitlement_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_entitlement_adjustment_ibfk_1")
-  ohrm_leave_adjustment  ohrm_leave_adjustment  @relation(fields: [adjustment_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_entitlement_adjustment_ibfk_2")
+model leave_entitlement_adjustment {
+  id                Int               @id @default(autoincrement())
+  adjustment_id     Int               @db.UnsignedInt
+  entitlement_id    Int               @db.UnsignedInt
+  length_days       Decimal?          @db.Decimal(4, 2)
+  leave_entitlement leave_entitlement @relation(fields: [entitlement_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_entitlement_adjustment_ibfk_1")
+  leave_adjustment  leave_adjustment  @relation(fields: [adjustment_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_entitlement_adjustment_ibfk_2")
 
   @@index([adjustment_id], map: "adjustment_id")
   @@index([entitlement_id], map: "entitlement_id")
 }
 
-model ohrm_leave_entitlement_type {
-  id                     Int                      @id @default(autoincrement()) @db.UnsignedInt
-  name                   String                   @db.VarChar(50)
-  is_editable            Boolean                  @default(false)
-  ohrm_leave_adjustment  ohrm_leave_adjustment[]
-  ohrm_leave_entitlement ohrm_leave_entitlement[]
+model leave_entitlement_type {
+  id                Int                 @id @default(autoincrement()) @db.UnsignedInt
+  name              String              @db.VarChar(50)
+  is_editable       Boolean             @default(false)
+  leave_adjustment  leave_adjustment[]
+  leave_entitlement leave_entitlement[]
 }
 
-model ohrm_leave_leave_entitlement {
-  id                     Int                    @id @default(autoincrement())
-  leave_id               Int
-  entitlement_id         Int                    @db.UnsignedInt
-  length_days            Decimal?               @db.Decimal(6, 4)
-  ohrm_leave_entitlement ohrm_leave_entitlement @relation(fields: [entitlement_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_leave_entitlement_ibfk_1")
-  ohrm_leave             ohrm_leave             @relation(fields: [leave_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_leave_entitlement_ibfk_2")
+model leave_leave_entitlement {
+  id                Int               @id @default(autoincrement())
+  leave_id          Int
+  entitlement_id    Int               @db.UnsignedInt
+  length_days       Decimal?          @db.Decimal(6, 4)
+  leave_entitlement leave_entitlement @relation(fields: [entitlement_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_leave_entitlement_ibfk_1")
+  leave             leave             @relation(fields: [leave_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_leave_entitlement_ibfk_2")
 
   @@index([entitlement_id], map: "entitlement_id")
   @@index([leave_id], map: "leave_id")
 }
 
-model ohrm_leave_period_history {
+model leave_period_history {
   id                       Int      @id @default(autoincrement())
   leave_period_start_month Int
   leave_period_start_day   Int
   created_at               DateTime @db.Date
 }
 
-model ohrm_leave_request {
-  id                         Int                          @id @default(autoincrement()) @db.UnsignedInt
-  leave_type_id              Int                          @db.UnsignedInt
-  date_applied               DateTime                     @db.Date
-  emp_number                 Int
-  comments                   String?                      @db.VarChar(256)
-  ohrm_leave                 ohrm_leave[]
-  hs_hr_employee             hs_hr_employee               @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_request_ibfk_1")
-  ohrm_leave_type            ohrm_leave_type              @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_request_ibfk_2")
-  ohrm_leave_request_comment ohrm_leave_request_comment[]
+model leave_request {
+  id                    Int                     @id @default(autoincrement()) @db.UnsignedInt
+  leave_type_id         Int                     @db.UnsignedInt
+  date_applied          DateTime                @db.Date
+  emp_number            Int
+  comments              String?                 @db.VarChar(256)
+  leave                 leave[]
+  employee              employee                @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "leave_request_ibfk_1")
+  leave_type            leave_type              @relation(fields: [leave_type_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_request_ibfk_2")
+  leave_request_comment leave_request_comment[]
 
   @@index([emp_number], map: "emp_number")
   @@index([leave_type_id], map: "leave_type_id")
 }
 
-model ohrm_leave_request_comment {
-  id                    Int                @id @default(autoincrement())
-  leave_request_id      Int                @db.UnsignedInt
-  created               DateTime?          @db.DateTime(0)
-  created_by_name       String             @db.VarChar(255)
+model leave_request_comment {
+  id                    Int           @id @default(autoincrement())
+  leave_request_id      Int           @db.UnsignedInt
+  created               DateTime?     @db.DateTime(0)
+  created_by_name       String        @db.VarChar(255)
   created_by_id         Int?
   created_by_emp_number Int?
-  comments              String?            @db.VarChar(255)
-  ohrm_leave_request    ohrm_leave_request @relation(fields: [leave_request_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_request_comment_ibfk_1")
-  ohrm_user             ohrm_user?         @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "ohrm_leave_request_comment_ibfk_2")
-  hs_hr_employee        hs_hr_employee?    @relation(fields: [created_by_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_leave_request_comment_ibfk_3")
+  comments              String?       @db.VarChar(255)
+  leave_request         leave_request @relation(fields: [leave_request_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "leave_request_comment_ibfk_1")
+  user                  user?         @relation(fields: [created_by_id], references: [id], onUpdate: Restrict, map: "leave_request_comment_ibfk_2")
+  employee              employee?     @relation(fields: [created_by_emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "leave_request_comment_ibfk_3")
 
   @@index([created_by_emp_number], map: "created_by_emp_number")
   @@index([created_by_id], map: "created_by_id")
   @@index([leave_request_id], map: "leave_request_id")
 }
 
-model ohrm_leave_status {
+model leave_status {
   id     Int    @id @default(autoincrement())
   status Int    @db.SmallInt
   name   String @db.VarChar(100)
 }
 
-model ohrm_leave_type {
-  id                                   Int                       @id @default(autoincrement()) @db.UnsignedInt
-  name                                 String                    @db.VarChar(50)
-  deleted                              Boolean                   @default(false)
-  exclude_in_reports_if_no_entitlement Boolean                   @default(false)
-  operational_country_id               Int?                      @db.UnsignedInt
-  ohrm_leave                           ohrm_leave[]
-  ohrm_leave_adjustment                ohrm_leave_adjustment[]
-  ohrm_leave_entitlement               ohrm_leave_entitlement[]
-  ohrm_leave_request                   ohrm_leave_request[]
-  ohrm_operational_country             ohrm_operational_country? @relation(fields: [operational_country_id], references: [id], onUpdate: Restrict, map: "ohrm_leave_type_ibfk_1")
+model leave_type {
+  id                                   Int                  @id @default(autoincrement()) @db.UnsignedInt
+  name                                 String               @db.VarChar(50)
+  deleted                              Boolean              @default(false)
+  exclude_in_reports_if_no_entitlement Boolean              @default(false)
+  operational_country_id               Int?                 @db.UnsignedInt
+  leave                                leave[]
+  leave_adjustment                     leave_adjustment[]
+  leave_entitlement                    leave_entitlement[]
+  leave_request                        leave_request[]
+  operational_country                  operational_country? @relation(fields: [operational_country_id], references: [id], onUpdate: Restrict, map: "leave_type_ibfk_1")
 
   @@index([operational_country_id], map: "operational_country_id")
 }
 
-model ohrm_license {
-  id               Int                @id @default(autoincrement())
-  name             String             @db.VarChar(100)
-  ohrm_emp_license ohrm_emp_license[]
+model license {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  emp_license emp_license[]
 }
 
-model ohrm_location {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @db.VarChar(110)
-  country_code        String                @db.VarChar(3)
-  province            String?               @db.VarChar(60)
-  city                String?               @db.VarChar(60)
-  address             String?               @db.VarChar(255)
-  zip_code            String?               @db.VarChar(35)
-  phone               String?               @db.VarChar(35)
-  fax                 String?               @db.VarChar(35)
-  notes               String?               @db.VarChar(255)
-  hs_hr_emp_locations hs_hr_emp_locations[]
-  hs_hr_country       hs_hr_country         @relation(fields: [country_code], references: [cou_code], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_location_ibfk_1")
+model location {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(110)
+  country_code  String          @db.VarChar(3)
+  province      String?         @db.VarChar(60)
+  city          String?         @db.VarChar(60)
+  address       String?         @db.VarChar(255)
+  zip_code      String?         @db.VarChar(35)
+  phone         String?         @db.VarChar(35)
+  fax           String?         @db.VarChar(35)
+  notes         String?         @db.VarChar(255)
+  emp_locations emp_locations[]
+  country       country         @relation(fields: [country_code], references: [cou_code], onDelete: Cascade, onUpdate: Restrict, map: "location_ibfk_1")
 
   @@index([country_code], map: "country_code")
 }
 
-model ohrm_login {
+model login {
   id                   Int       @id @default(autoincrement())
   user_id              BigInt
   user_name            String?   @db.VarChar(255)
@@ -1458,66 +1458,66 @@ model ohrm_login {
   login_time           DateTime? @default(now()) @db.Timestamp(0)
 }
 
-model ohrm_marketplace_addon {
-  addon_id    Int                          @id
-  title       String?                      @db.VarChar(100)
-  date        DateTime?                    @db.Timestamp(0)
-  status      String?                      @db.VarChar(30)
-  version     String?                      @db.VarChar(100)
-  plugin_name String?                      @db.VarChar(255)
-  type        ohrm_marketplace_addon_type? @default(free)
+model marketplace_addon {
+  addon_id    Int                     @id
+  title       String?                 @db.VarChar(100)
+  date        DateTime?               @db.Timestamp(0)
+  status      String?                 @db.VarChar(30)
+  version     String?                 @db.VarChar(100)
+  plugin_name String?                 @db.VarChar(255)
+  type        marketplace_addon_type? @default(free)
 }
 
-model ohrm_membership {
-  id                      Int                       @id @default(autoincrement())
-  name                    String                    @db.VarChar(100)
-  hs_hr_emp_member_detail hs_hr_emp_member_detail[]
+model membership {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(100)
+  emp_member_detail emp_member_detail[]
 }
 
-model ohrm_menu_item {
-  id          Int          @id @default(autoincrement())
-  menu_title  String       @db.VarChar(255)
-  screen_id   Int?
-  parent_id   Int?
-  level       Int          @db.TinyInt
-  order_hint  Int
-  url_extras  String?      @db.VarChar(255)
-  status      Int          @default(1) @db.TinyInt
-  ohrm_screen ohrm_screen? @relation(fields: [screen_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_menu_item_ibfk_1")
+model menu_item {
+  id         Int     @id @default(autoincrement())
+  menu_title String  @db.VarChar(255)
+  screen_id  Int?
+  parent_id  Int?
+  level      Int     @db.TinyInt
+  order_hint Int
+  url_extras String? @db.VarChar(255)
+  status     Int     @default(1) @db.TinyInt
+  screen     screen? @relation(fields: [screen_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "menu_item_ibfk_1")
 
   @@index([screen_id], map: "screen_id")
 }
 
-model ohrm_module {
-  id                       Int                        @id @default(autoincrement())
-  name                     String?                    @db.VarChar(120)
-  status                   Int?                       @default(1) @db.TinyInt
-  ohrm_module_default_page ohrm_module_default_page[]
-  ohrm_screen              ohrm_screen[]
+model modules {
+  id                  Int                   @id @default(autoincrement())
+  name                String?               @db.VarChar(120)
+  status              Int?                  @default(1) @db.TinyInt
+  module_default_page module_default_page[]
+  screen              screen[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ohrm_module_default_page {
-  id             Int            @id @default(autoincrement())
-  module_id      Int
-  user_role_id   Int
-  action         String?        @db.VarChar(255)
-  enable_class   String?        @db.VarChar(100)
-  priority       Int            @default(0)
-  ohrm_user_role ohrm_user_role @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_module_default_page_ibfk_1")
-  ohrm_module    ohrm_module    @relation(fields: [module_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_module_default_page_ibfk_2")
+model module_default_page {
+  id           Int       @id @default(autoincrement())
+  module_id    Int
+  user_role_id Int
+  action       String?   @db.VarChar(255)
+  enable_class String?   @db.VarChar(100)
+  priority     Int       @default(0)
+  user_role    user_role @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "module_default_page_ibfk_1")
+  module       modules   @relation(fields: [module_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "module_default_page_ibfk_2")
 
   @@index([module_id], map: "module_id")
   @@index([user_role_id], map: "user_role_id")
 }
 
-model ohrm_nationality {
-  id             Int              @id @default(autoincrement())
-  name           String           @db.VarChar(100)
-  hs_hr_employee hs_hr_employee[]
+model nationality {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(100)
+  employee employee[]
 }
 
-model ohrm_oauth_access_token {
+model oauth_access_token {
   access_token String   @id @db.VarChar(40)
   client_id    String   @db.VarChar(80)
   user_id      String?  @db.VarChar(255)
@@ -1525,7 +1525,7 @@ model ohrm_oauth_access_token {
   scope        String?  @db.VarChar(2000)
 }
 
-model ohrm_oauth_authorization_code {
+model oauth_authorization_code {
   authorization_code String   @id @db.VarChar(40)
   client_id          String   @db.VarChar(80)
   user_id            String?  @db.VarChar(255)
@@ -1534,7 +1534,7 @@ model ohrm_oauth_authorization_code {
   scope              String?  @db.VarChar(2000)
 }
 
-model ohrm_oauth_client {
+model oauth_client {
   client_id     String  @id @db.VarChar(80)
   client_secret String  @db.VarChar(80)
   redirect_uri  String  @db.VarChar(2000)
@@ -1542,7 +1542,7 @@ model ohrm_oauth_client {
   scope         String? @db.VarChar(4000)
 }
 
-model ohrm_oauth_refresh_token {
+model oauth_refresh_token {
   refresh_token String   @id @db.VarChar(40)
   client_id     String   @db.VarChar(80)
   user_id       String?  @db.VarChar(255)
@@ -1551,54 +1551,54 @@ model ohrm_oauth_refresh_token {
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model ohrm_oauth_scope {
+model oauth_scope {
   scope      String? @db.Text
   is_default Boolean @default(false)
 
   @@ignore
 }
 
-model ohrm_oauth_user {
+model oauth_user {
   username   String  @id @db.VarChar(255)
   password   String? @db.VarChar(2000)
   first_name String? @db.VarChar(255)
   last_name  String? @db.VarChar(255)
 }
 
-model ohrm_openid_provider {
-  id                               Int                                @id @default(autoincrement())
-  provider_name                    String?                            @db.VarChar(40)
-  provider_url                     String?                            @db.VarChar(255)
-  status                           Boolean                            @default(true)
-  ohrm_auth_provider_extra_details ohrm_auth_provider_extra_details[]
-  ohrm_openid_user_identity        ohrm_openid_user_identity[]        @ignore
+model openid_provider {
+  id                          Int                           @id @default(autoincrement())
+  provider_name               String?                       @db.VarChar(40)
+  provider_url                String?                       @db.VarChar(255)
+  status                      Boolean                       @default(true)
+  auth_provider_extra_details auth_provider_extra_details[]
+  openid_user_identity        openid_user_identity[]        @ignore
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model ohrm_openid_user_identity {
-  user_id              Int?
-  provider_id          Int?
-  user_identity        String?               @db.VarChar(255)
-  ohrm_user            ohrm_user?            @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "ohrm_user_identity_ibfk_1")
-  ohrm_openid_provider ohrm_openid_provider? @relation(fields: [provider_id], references: [id], onUpdate: Restrict, map: "ohrm_user_identity_ibfk_2")
+model openid_user_identity {
+  user_id         Int?
+  provider_id     Int?
+  user_identity   String?          @db.VarChar(255)
+  user            user?            @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "user_identity_ibfk_1")
+  openid_provider openid_provider? @relation(fields: [provider_id], references: [id], onUpdate: Restrict, map: "user_identity_ibfk_2")
 
-  @@index([user_id], map: "ohrm_user_identity_ibfk_1")
-  @@index([provider_id], map: "ohrm_user_identity_ibfk_2")
+  @@index([user_id], map: "user_identity_ibfk_1")
+  @@index([provider_id], map: "user_identity_ibfk_2")
   @@ignore
 }
 
-model ohrm_operational_country {
-  id              Int               @id @default(autoincrement()) @db.UnsignedInt
-  country_code    String?           @db.Char(2)
-  ohrm_holiday    ohrm_holiday[]
-  ohrm_leave_type ohrm_leave_type[]
-  hs_hr_country   hs_hr_country?    @relation(fields: [country_code], references: [cou_code], onDelete: Cascade, map: "fk_ohrm_operational_country_hs_hr_country")
-  ohrm_work_week  ohrm_work_week[]
+model operational_country {
+  id           Int          @id @default(autoincrement()) @db.UnsignedInt
+  country_code String?      @db.Char(2)
+  holiday      holiday[]
+  leave_type   leave_type[]
+  country      country?     @relation(fields: [country_code], references: [cou_code], onDelete: Cascade, map: "fk_operational_country_country")
+  work_week    work_week[]
 
-  @@index([country_code], map: "fk_ohrm_operational_country_hs_hr_country")
+  @@index([country_code], map: "fk_operational_country_country")
 }
 
-model ohrm_organization_gen_info {
+model organization_gen_info {
   id                  Int     @id @default(autoincrement())
   name                String  @db.VarChar(100)
   tax_id              String? @db.VarChar(30)
@@ -1615,96 +1615,96 @@ model ohrm_organization_gen_info {
   note                String? @db.VarChar(255)
 }
 
-model ohrm_pay_grade {
-  id                      Int                       @id @default(autoincrement())
-  name                    String?                   @unique(map: "name") @db.VarChar(60)
-  hs_hr_emp_basicsalary   hs_hr_emp_basicsalary[]
-  ohrm_pay_grade_currency ohrm_pay_grade_currency[]
+model pay_grade {
+  id                 Int                  @id @default(autoincrement())
+  name               String?              @unique(map: "name") @db.VarChar(60)
+  emp_basicsalary    emp_basicsalary[]
+  pay_grade_currency pay_grade_currency[]
 }
 
-model ohrm_pay_grade_currency {
-  pay_grade_id        Int
-  currency_id         String              @default("") @db.VarChar(6)
-  min_salary          Float?
-  max_salary          Float?
-  hs_hr_currency_type hs_hr_currency_type @relation(fields: [currency_id], references: [currency_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_pay_grade_currency_ibfk_1")
-  ohrm_pay_grade      ohrm_pay_grade      @relation(fields: [pay_grade_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_pay_grade_currency_ibfk_2")
+model pay_grade_currency {
+  pay_grade_id  Int
+  currency_id   String        @default("") @db.VarChar(6)
+  min_salary    Float?
+  max_salary    Float?
+  currency_type currency_type @relation(fields: [currency_id], references: [currency_id], onDelete: Cascade, onUpdate: Restrict, map: "pay_grade_currency_ibfk_1")
+  pay_grade     pay_grade     @relation(fields: [pay_grade_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "pay_grade_currency_ibfk_2")
 
   @@id([pay_grade_id, currency_id])
   @@index([currency_id], map: "currency_id")
 }
 
-model ohrm_performance_review {
-  id                   Int                    @id @default(autoincrement())
-  status_id            Int?
-  employee_number      Int?
-  work_period_start    DateTime?              @db.Date
-  work_period_end      DateTime?              @db.Date
-  job_title_code       Int?
-  department_id        Int?
-  due_date             DateTime?              @db.Date
-  completed_date       DateTime?              @db.Date
-  activated_date       DateTime?              @db.DateTime(0)
-  final_comment        String?                @db.Text
-  final_rate           Decimal?               @db.Decimal(18, 2)
-  hs_hr_employee       hs_hr_employee?        @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_performance_review_ibfk_1")
-  ohrm_reviewer        ohrm_reviewer[]
-  ohrm_reviewer_rating ohrm_reviewer_rating[]
+model performance_review {
+  id                Int               @id @default(autoincrement())
+  status_id         Int?
+  employee_number   Int?
+  work_period_start DateTime?         @db.Date
+  work_period_end   DateTime?         @db.Date
+  job_title_code    Int?
+  department_id     Int?
+  due_date          DateTime?         @db.Date
+  completed_date    DateTime?         @db.Date
+  activated_date    DateTime?         @db.DateTime(0)
+  final_comment     String?           @db.Text
+  final_rate        Decimal?          @db.Decimal(18, 2)
+  employee          employee?         @relation(fields: [employee_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "performance_review_ibfk_1")
+  reviewer          reviewer[]
+  reviewer_rating   reviewer_rating[]
 
   @@index([employee_number], map: "employee_number")
 }
 
-model ohrm_performance_track {
-  id                                                               Int                                 @id @default(autoincrement())
-  emp_number                                                       Int
-  tracker_name                                                     String                              @db.VarChar(200)
-  added_date                                                       DateTime?                           @db.Timestamp(0)
-  added_by                                                         Int?
-  status                                                           Int?
-  modified_date                                                    DateTime?                           @db.Timestamp(0)
-  hs_hr_employee_ohrm_performance_track_emp_numberTohs_hr_employee hs_hr_employee                      @relation("ohrm_performance_track_emp_numberTohs_hr_employee", fields: [emp_number], references: [emp_number], onDelete: Cascade, map: "ohrm_performance_track_fk1")
-  hs_hr_employee_ohrm_performance_track_added_byTohs_hr_employee   hs_hr_employee?                     @relation("ohrm_performance_track_added_byTohs_hr_employee", fields: [added_by], references: [emp_number], onDelete: Cascade, map: "ohrm_performance_track_fk2")
-  ohrm_performance_tracker_log                                     ohrm_performance_tracker_log[]
-  ohrm_performance_tracker_reviewer                                ohrm_performance_tracker_reviewer[]
+model performance_track {
+  id                                              Int                            @id @default(autoincrement())
+  emp_number                                      Int
+  tracker_name                                    String                         @db.VarChar(200)
+  added_date                                      DateTime?                      @db.Timestamp(0)
+  added_by                                        Int?
+  status                                          Int?
+  modified_date                                   DateTime?                      @db.Timestamp(0)
+  employee_performance_track_emp_numberToemployee employee                       @relation("performance_track_emp_numberToemployee", fields: [emp_number], references: [emp_number], onDelete: Cascade, map: "performance_track_fk1")
+  employee_performance_track_added_byToemployee   employee?                      @relation("performance_track_added_byToemployee", fields: [added_by], references: [emp_number], onDelete: Cascade, map: "performance_track_fk2")
+  performance_tracker_log                         performance_tracker_log[]
+  performance_tracker_reviewer                    performance_tracker_reviewer[]
 
-  @@index([emp_number], map: "ohrm_performance_track_fk1_idx")
-  @@index([added_by], map: "ohrm_performance_track_fk2_idx")
+  @@index([emp_number], map: "performance_track_fk1_idx")
+  @@index([added_by], map: "performance_track_fk2_idx")
 }
 
-model ohrm_performance_tracker_log {
-  id                     Int                     @id @default(autoincrement())
-  performance_track_id   Int?
-  log                    String?                 @db.VarChar(150)
-  comment                String?                 @db.VarChar(3000)
-  status                 Int?
-  added_date             DateTime?               @db.Timestamp(0)
-  modified_date          DateTime?               @db.Timestamp(0)
-  reviewer_id            Int?
-  achievement            String?                 @db.VarChar(45)
-  user_id                Int?
-  ohrm_user              ohrm_user?              @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_ohrm_performance_tracker_log_1")
-  ohrm_performance_track ohrm_performance_track? @relation(fields: [performance_track_id], references: [id], onDelete: Cascade, map: "ohrm_performance_tracker_log_fk1")
-  hs_hr_employee         hs_hr_employee?         @relation(fields: [reviewer_id], references: [emp_number], onDelete: Cascade, map: "ohrm_performance_tracker_log_fk2")
+model performance_tracker_log {
+  id                   Int                @id @default(autoincrement())
+  performance_track_id Int?
+  log                  String?            @db.VarChar(150)
+  comment              String?            @db.VarChar(3000)
+  status               Int?
+  added_date           DateTime?          @db.Timestamp(0)
+  modified_date        DateTime?          @db.Timestamp(0)
+  reviewer_id          Int?
+  achievement          String?            @db.VarChar(45)
+  user_id              Int?
+  user                 user?              @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_performance_tracker_log_1")
+  performance_track    performance_track? @relation(fields: [performance_track_id], references: [id], onDelete: Cascade, map: "performance_tracker_log_fk1")
+  employee             employee?          @relation(fields: [reviewer_id], references: [emp_number], onDelete: Cascade, map: "performance_tracker_log_fk2")
 
-  @@index([user_id], map: "fk_ohrm_performance_tracker_log_1")
-  @@index([performance_track_id], map: "ohrm_performance_tracker_log_fk1_idx")
-  @@index([reviewer_id], map: "ohrm_performance_tracker_log_fk2_idx")
+  @@index([user_id], map: "fk_performance_tracker_log_1")
+  @@index([performance_track_id], map: "performance_tracker_log_fk1_idx")
+  @@index([reviewer_id], map: "performance_tracker_log_fk2_idx")
 }
 
-model ohrm_performance_tracker_reviewer {
-  id                     Int                    @id @default(autoincrement())
-  performance_track_id   Int
-  reviewer_id            Int
-  added_date             DateTime?              @db.Timestamp(0)
-  status                 Int?
-  ohrm_performance_track ohrm_performance_track @relation(fields: [performance_track_id], references: [id], onDelete: Cascade, map: "ohrm_performance_tracker_reviewer_fk1")
-  hs_hr_employee         hs_hr_employee         @relation(fields: [reviewer_id], references: [emp_number], onDelete: Cascade, map: "ohrm_performance_tracker_reviewer_fk2")
+model performance_tracker_reviewer {
+  id                   Int               @id @default(autoincrement())
+  performance_track_id Int
+  reviewer_id          Int
+  added_date           DateTime?         @db.Timestamp(0)
+  status               Int?
+  performance_track    performance_track @relation(fields: [performance_track_id], references: [id], onDelete: Cascade, map: "performance_tracker_reviewer_fk1")
+  employee             employee          @relation(fields: [reviewer_id], references: [emp_number], onDelete: Cascade, map: "performance_tracker_reviewer_fk2")
 
-  @@index([performance_track_id], map: "ohrm_performance_tracker_reviewer_fk1_idx")
-  @@index([reviewer_id], map: "ohrm_performance_tracker_reviewer_fk2_idx")
+  @@index([performance_track_id], map: "performance_tracker_reviewer_fk1_idx")
+  @@index([reviewer_id], map: "performance_tracker_reviewer_fk2_idx")
 }
 
-model ohrm_plugin {
+model plugin {
   id      Int     @id @default(autoincrement())
   name    String  @db.VarChar(100)
   version String? @db.VarChar(32)
@@ -1712,40 +1712,40 @@ model ohrm_plugin {
   @@index([name], map: "name")
 }
 
-model ohrm_project {
-  project_id            Int                     @unique @default(autoincrement())
-  customer_id           Int
-  name                  String?                 @db.VarChar(100)
-  description           String?                 @db.VarChar(256)
-  is_deleted            Boolean?                @default(false)
-  ohrm_project_activity ohrm_project_activity[]
-  ohrm_project_admin    ohrm_project_admin[]
+model project {
+  project_id       Int                @unique @default(autoincrement())
+  customer_id      Int
+  name             String?            @db.VarChar(100)
+  description      String?            @db.VarChar(256)
+  is_deleted       Boolean?           @default(false)
+  project_activity project_activity[]
+  project_admin    project_admin[]
 
   @@id([project_id, customer_id])
   @@index([customer_id], map: "customer_id")
 }
 
-model ohrm_project_activity {
-  activity_id  Int          @id @default(autoincrement())
-  project_id   Int
-  name         String?      @db.VarChar(110)
-  is_deleted   Boolean?     @default(false)
-  ohrm_project ohrm_project @relation(fields: [project_id], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_project_activity_ibfk_1")
+model project_activity {
+  activity_id Int      @id @default(autoincrement())
+  project_id  Int
+  name        String?  @db.VarChar(110)
+  is_deleted  Boolean? @default(false)
+  project     project  @relation(fields: [project_id], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "project_activity_ibfk_1")
 
   @@index([project_id], map: "project_id")
 }
 
-model ohrm_project_admin {
-  project_id     Int
-  emp_number     Int
-  ohrm_project   ohrm_project   @relation(fields: [project_id], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_project_admin_ibfk_1")
-  hs_hr_employee hs_hr_employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_project_admin_ibfk_2")
+model project_admin {
+  project_id Int
+  emp_number Int
+  project    project  @relation(fields: [project_id], references: [project_id], onDelete: Cascade, onUpdate: Restrict, map: "project_admin_ibfk_1")
+  employee   employee @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "project_admin_ibfk_2")
 
   @@id([project_id, emp_number])
   @@index([emp_number], map: "emp_number")
 }
 
-model ohrm_registration_event_queue {
+model registration_event_queue {
   id           Int       @id @default(autoincrement())
   event_type   Int
   published    Int       @default(0) @db.UnsignedTinyInt
@@ -1754,41 +1754,41 @@ model ohrm_registration_event_queue {
   data         String?   @db.Text
 }
 
-model ohrm_report {
-  report_id                             BigInt                                  @id @default(autoincrement())
-  name                                  String                                  @db.VarChar(255)
-  report_group_id                       BigInt
-  use_filter_field                      Boolean
-  type                                  String?                                 @db.VarChar(255)
-  ohrm_report_group                     ohrm_report_group                       @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_report_ibfk_1")
-  ohrm_selected_composite_display_field ohrm_selected_composite_display_field[]
-  ohrm_selected_display_field           ohrm_selected_display_field[]
-  ohrm_selected_display_field_group     ohrm_selected_display_field_group[]
-  ohrm_selected_filter_field            ohrm_selected_filter_field[]
-  ohrm_selected_group_field             ohrm_selected_group_field[]
+model report {
+  report_id                        BigInt                             @id @default(autoincrement())
+  name                             String                             @db.VarChar(255)
+  report_group_id                  BigInt
+  use_filter_field                 Boolean
+  type                             String?                            @db.VarChar(255)
+  report_group                     report_group                       @relation(fields: [report_group_id], references: [report_group_id], onDelete: Cascade, onUpdate: Restrict, map: "report_ibfk_1")
+  selected_composite_display_field selected_composite_display_field[]
+  selected_display_field           selected_display_field[]
+  selected_display_field_group     selected_display_field_group[]
+  selected_filter_field            selected_filter_field[]
+  selected_group_field             selected_group_field[]
 
   @@index([report_group_id], map: "report_group_id")
 }
 
-model ohrm_report_group {
-  report_group_id              BigInt                         @id
-  name                         String                         @db.VarChar(255)
-  core_sql                     String                         @db.MediumText
-  ohrm_composite_display_field ohrm_composite_display_field[]
-  ohrm_display_field           ohrm_display_field[]
-  ohrm_display_field_group     ohrm_display_field_group[]
-  ohrm_filter_field            ohrm_filter_field[]
-  ohrm_report                  ohrm_report[]
+model report_group {
+  report_group_id         BigInt                    @id
+  name                    String                    @db.VarChar(255)
+  core_sql                String                    @db.MediumText
+  composite_display_field composite_display_field[]
+  display_field           display_field[]
+  display_field_group     display_field_group[]
+  filter_field            filter_field[]
+  report                  report[]
 }
 
-model ohrm_reset_password {
+model reset_password {
   id                 BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   reset_email        String   @db.VarChar(60)
   reset_request_date DateTime @db.Timestamp(0)
   reset_code         String   @db.VarChar(200)
 }
 
-model ohrm_rest_api_usage {
+model rest_api_usage {
   id         Int      @id @default(autoincrement())
   client_id  String?  @db.VarChar(255)
   user_id    String?  @db.VarChar(255)
@@ -1801,41 +1801,41 @@ model ohrm_rest_api_usage {
   created_at DateTime @default(now()) @db.Timestamp(0)
 }
 
-model ohrm_reviewer {
-  id                      Int                      @id @default(autoincrement())
-  review_id               Int?
-  employee_number         Int?
-  status                  Int?
-  reviewer_group_id       Int?
-  completed_date          DateTime?                @db.DateTime(0)
-  comment                 String?                  @db.Text
-  ohrm_performance_review ohrm_performance_review? @relation(fields: [review_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_reviewer_ibfk_1")
-  ohrm_reviewer_rating    ohrm_reviewer_rating[]
+model reviewer {
+  id                 Int                 @id @default(autoincrement())
+  review_id          Int?
+  employee_number    Int?
+  status             Int?
+  reviewer_group_id  Int?
+  completed_date     DateTime?           @db.DateTime(0)
+  comment            String?             @db.Text
+  performance_review performance_review? @relation(fields: [review_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reviewer_ibfk_1")
+  reviewer_rating    reviewer_rating[]
 
   @@index([review_id], map: "review_id")
 }
 
-model ohrm_reviewer_group {
+model reviewer_group {
   id      Int     @id @default(autoincrement())
   name    String? @db.VarChar(50)
   piority Int?
 }
 
-model ohrm_reviewer_rating {
-  id                      Int                      @id @default(autoincrement())
-  rating                  Decimal?                 @db.Decimal(18, 2)
-  kpi_id                  Int?
-  review_id               Int?
-  reviewer_id             Int
-  comment                 String?                  @db.Text
-  ohrm_reviewer           ohrm_reviewer            @relation(fields: [reviewer_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_reviewer_rating_ibfk_1")
-  ohrm_performance_review ohrm_performance_review? @relation(fields: [review_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_reviewer_rating_ibfk_2")
+model reviewer_rating {
+  id                 Int                 @id @default(autoincrement())
+  rating             Decimal?            @db.Decimal(18, 2)
+  kpi_id             Int?
+  review_id          Int?
+  reviewer_id        Int
+  comment            String?             @db.Text
+  reviewer           reviewer            @relation(fields: [reviewer_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reviewer_rating_ibfk_1")
+  performance_review performance_review? @relation(fields: [review_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reviewer_rating_ibfk_2")
 
   @@index([review_id], map: "review_id")
   @@index([reviewer_id], map: "reviewer_id")
 }
 
-model ohrm_role_user_selection_rule {
+model role_user_selection_rule {
   user_role_id        Int
   selection_rule_id   Int
   configurable_params String? @db.Text
@@ -1843,77 +1843,77 @@ model ohrm_role_user_selection_rule {
   @@id([user_role_id, selection_rule_id])
 }
 
-model ohrm_screen {
-  id                     Int                      @id @default(autoincrement())
-  name                   String                   @db.VarChar(100)
-  module_id              Int
-  action_url             String                   @db.VarChar(255)
-  ohrm_data_group_screen ohrm_data_group_screen[]
-  ohrm_menu_item         ohrm_menu_item[]
-  ohrm_module            ohrm_module              @relation(fields: [module_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_screen_ibfk_1")
-  ohrm_user_role_screen  ohrm_user_role_screen[]
+model screen {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(100)
+  module_id         Int
+  action_url        String              @db.VarChar(255)
+  data_group_screen data_group_screen[]
+  menu_item         menu_item[]
+  module            modules             @relation(fields: [module_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "screen_ibfk_1")
+  user_role_screen  user_role_screen[]
 
   @@index([module_id], map: "module_id")
 }
 
-model ohrm_selected_composite_display_field {
-  id                           BigInt
-  composite_display_field_id   BigInt
-  report_id                    BigInt
-  ohrm_report                  ohrm_report                  @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_composite_display_field_ibfk_1")
-  ohrm_composite_display_field ohrm_composite_display_field @relation(fields: [composite_display_field_id], references: [composite_display_field_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_composite_display_field_ibfk_2")
+model selected_composite_display_field {
+  id                         BigInt
+  composite_display_field_id BigInt
+  report_id                  BigInt
+  report                     report                  @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_composite_display_field_ibfk_1")
+  composite_display_field    composite_display_field @relation(fields: [composite_display_field_id], references: [composite_display_field_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_composite_display_field_ibfk_2")
 
   @@id([id, composite_display_field_id, report_id])
   @@index([composite_display_field_id], map: "composite_display_field_id")
   @@index([report_id], map: "report_id")
 }
 
-model ohrm_selected_display_field {
-  id                 BigInt             @default(autoincrement())
-  display_field_id   BigInt
-  report_id          BigInt
-  ohrm_report        ohrm_report        @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_display_field_ibfk_1")
-  ohrm_display_field ohrm_display_field @relation(fields: [display_field_id], references: [display_field_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_display_field_ibfk_2")
+model selected_display_field {
+  id               BigInt        @default(autoincrement())
+  display_field_id BigInt
+  report_id        BigInt
+  report           report        @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_display_field_ibfk_1")
+  display_field    display_field @relation(fields: [display_field_id], references: [display_field_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_display_field_ibfk_2")
 
   @@id([id, display_field_id, report_id])
   @@index([display_field_id], map: "display_field_id")
   @@index([report_id], map: "report_id")
 }
 
-model ohrm_selected_display_field_group {
-  id                       Int                      @id @default(autoincrement()) @db.UnsignedInt
-  report_id                BigInt
-  display_field_group_id   Int                      @db.UnsignedInt
-  ohrm_report              ohrm_report              @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_display_field_group_ibfk_1")
-  ohrm_display_field_group ohrm_display_field_group @relation(fields: [display_field_group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_display_field_group_ibfk_2")
+model selected_display_field_group {
+  id                     Int                 @id @default(autoincrement()) @db.UnsignedInt
+  report_id              BigInt
+  display_field_group_id Int                 @db.UnsignedInt
+  report                 report              @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_display_field_group_ibfk_1")
+  display_field_group    display_field_group @relation(fields: [display_field_group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "selected_display_field_group_ibfk_2")
 
   @@index([display_field_group_id], map: "display_field_group_id")
   @@index([report_id], map: "report_id")
 }
 
-model ohrm_selected_filter_field {
+model selected_filter_field {
   report_id          BigInt
   filter_field_id    BigInt
   filter_field_order BigInt
-  value1             String?           @db.VarChar(255)
-  value2             String?           @db.VarChar(255)
-  where_condition    String?           @db.VarChar(255)
-  type               String            @db.VarChar(255)
-  ohrm_report        ohrm_report       @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_filter_field_ibfk_1")
-  ohrm_filter_field  ohrm_filter_field @relation(fields: [filter_field_id], references: [filter_field_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_filter_field_ibfk_2")
+  value1             String?      @db.VarChar(255)
+  value2             String?      @db.VarChar(255)
+  where_condition    String?      @db.VarChar(255)
+  type               String       @db.VarChar(255)
+  report             report       @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_filter_field_ibfk_1")
+  filter_field       filter_field @relation(fields: [filter_field_id], references: [filter_field_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_filter_field_ibfk_2")
 
   @@id([report_id, filter_field_id])
   @@index([filter_field_id], map: "filter_field_id")
   @@index([report_id], map: "report_id")
 }
 
-model ohrm_selected_group_field {
-  group_field_id             BigInt
-  summary_display_field_id   BigInt
-  report_id                  BigInt
-  ohrm_report                ohrm_report                @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_group_field_ibfk_1")
-  ohrm_group_field           ohrm_group_field           @relation(fields: [group_field_id], references: [group_field_id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_selected_group_field_ibfk_2")
-  ohrm_summary_display_field ohrm_summary_display_field @relation(fields: [summary_display_field_id], references: [summary_display_field_id], onUpdate: Restrict, map: "ohrm_selected_group_field_ibfk_3")
+model selected_group_field {
+  group_field_id           BigInt
+  summary_display_field_id BigInt
+  report_id                BigInt
+  report                   report                @relation(fields: [report_id], references: [report_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_group_field_ibfk_1")
+  group_field              group_field           @relation(fields: [group_field_id], references: [group_field_id], onDelete: Cascade, onUpdate: Restrict, map: "selected_group_field_ibfk_2")
+  summary_display_field    summary_display_field @relation(fields: [summary_display_field_id], references: [summary_display_field_id], onUpdate: Restrict, map: "selected_group_field_ibfk_3")
 
   @@id([group_field_id, summary_display_field_id, report_id])
   @@index([group_field_id], map: "group_field_id")
@@ -1921,47 +1921,47 @@ model ohrm_selected_group_field {
   @@index([summary_display_field_id], map: "summary_display_field_id")
 }
 
-model ohrm_skill {
-  id              Int               @id @default(autoincrement())
-  name            String?           @db.VarChar(120)
-  description     String?           @db.Text
-  hs_hr_emp_skill hs_hr_emp_skill[] @ignore
+model skill {
+  id          Int         @id @default(autoincrement())
+  name        String?     @db.VarChar(120)
+  description String?     @db.Text
+  emp_skill   emp_skill[] @ignore
 }
 
-model ohrm_subunit {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique(map: "name") @db.VarChar(100)
-  unit_id        String?          @db.VarChar(100)
-  description    String?          @db.VarChar(400)
-  lft            Int?             @db.UnsignedSmallInt
-  rgt            Int?             @db.UnsignedSmallInt
-  level          Int?             @db.UnsignedSmallInt
-  hs_hr_employee hs_hr_employee[]
+model subunit {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique(map: "name") @db.VarChar(100)
+  unit_id     String?    @db.VarChar(100)
+  description String?    @db.VarChar(400)
+  lft         Int?       @db.UnsignedSmallInt
+  rgt         Int?       @db.UnsignedSmallInt
+  level       Int?       @db.UnsignedSmallInt
+  employee    employee[]
 }
 
-model ohrm_summary_display_field {
-  summary_display_field_id  BigInt                      @id
-  function                  String                      @db.VarChar(1000)
-  label                     String                      @db.VarChar(255)
-  field_alias               String?                     @db.VarChar(255)
-  is_sortable               String                      @db.VarChar(10)
-  sort_order                String?                     @db.VarChar(255)
-  sort_field                String?                     @db.VarChar(255)
-  element_type              String                      @db.VarChar(255)
-  element_property          String                      @db.VarChar(1000)
-  width                     String                      @db.VarChar(255)
-  is_exportable             String?                     @db.VarChar(10)
-  text_alignment_style      String?                     @db.VarChar(20)
-  is_value_list             Boolean                     @default(false)
-  display_field_group_id    Int?                        @db.UnsignedInt
-  default_value             String?                     @db.VarChar(255)
-  ohrm_selected_group_field ohrm_selected_group_field[]
-  ohrm_display_field_group  ohrm_display_field_group?   @relation(fields: [display_field_group_id], references: [id], onUpdate: Restrict, map: "ohrm_summary_display_field_ibfk_1")
+model summary_display_field {
+  summary_display_field_id BigInt                 @id
+  function                 String                 @db.VarChar(1000)
+  label                    String                 @db.VarChar(255)
+  field_alias              String?                @db.VarChar(255)
+  is_sortable              String                 @db.VarChar(10)
+  sort_order               String?                @db.VarChar(255)
+  sort_field               String?                @db.VarChar(255)
+  element_type             String                 @db.VarChar(255)
+  element_property         String                 @db.VarChar(1000)
+  width                    String                 @db.VarChar(255)
+  is_exportable            String?                @db.VarChar(10)
+  text_alignment_style     String?                @db.VarChar(20)
+  is_value_list            Boolean                @default(false)
+  display_field_group_id   Int?                   @db.UnsignedInt
+  default_value            String?                @db.VarChar(255)
+  selected_group_field     selected_group_field[]
+  display_field_group      display_field_group?   @relation(fields: [display_field_group_id], references: [id], onUpdate: Restrict, map: "summary_display_field_ibfk_1")
 
   @@index([display_field_group_id], map: "display_field_group_id")
 }
 
-model ohrm_theme {
+model theme {
   theme_id           Int     @id @default(autoincrement())
   theme_name         String? @db.VarChar(100)
   main_logo          Bytes?  @db.Blob
@@ -1970,7 +1970,7 @@ model ohrm_theme {
   login_banner       Bytes?  @db.Blob
 }
 
-model ohrm_timesheet {
+model timesheet {
   timesheet_id BigInt   @id @default(autoincrement())
   state        String   @db.VarChar(255)
   start_date   DateTime @db.Date
@@ -1978,20 +1978,20 @@ model ohrm_timesheet {
   employee_id  BigInt
 }
 
-model ohrm_timesheet_action_log {
-  timesheet_action_log_id BigInt    @id @default(autoincrement())
-  comment                 String?   @db.VarChar(255)
-  action                  String?   @db.VarChar(255)
-  date_time               DateTime  @db.Date
+model timesheet_action_log {
+  timesheet_action_log_id BigInt   @id @default(autoincrement())
+  comment                 String?  @db.VarChar(255)
+  action                  String?  @db.VarChar(255)
+  date_time               DateTime @db.Date
   performed_by            Int
   timesheet_id            BigInt
-  ohrm_user               ohrm_user @relation(fields: [performed_by], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_timesheet_action_log_ibfk_1")
+  user                    user     @relation(fields: [performed_by], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "timesheet_action_log_ibfk_1")
 
   @@index([performed_by], map: "performed_by")
   @@index([timesheet_id], map: "timesheet_id")
 }
 
-model ohrm_timesheet_item {
+model timesheet_item {
   timesheet_item_id BigInt   @id @default(autoincrement())
   timesheet_id      BigInt
   date              DateTime @db.Date
@@ -2005,7 +2005,7 @@ model ohrm_timesheet_item {
   @@index([timesheet_id], map: "timesheet_id")
 }
 
-model ohrm_upgrade_history {
+model upgrade_history {
   id              Int       @id @default(autoincrement())
   start_version   String?   @db.VarChar(30)
   end_version     String?   @db.VarChar(30)
@@ -2014,28 +2014,28 @@ model ohrm_upgrade_history {
   upgraded_date   DateTime? @db.DateTime(0)
 }
 
-model ohrm_user {
-  id                           Int                            @id @default(autoincrement())
-  user_role_id                 Int
-  emp_number                   Int?
-  user_name                    String?                        @unique(map: "user_name") @db.VarChar(40)
-  user_password                String?                        @db.VarChar(255)
-  deleted                      Boolean                        @default(false)
-  status                       Boolean                        @default(true)
-  date_entered                 DateTime?                      @db.DateTime(0)
-  date_modified                DateTime?                      @db.DateTime(0)
-  modified_user_id             Int?
-  created_by                   Int?
-  hs_hr_mailnotifications      hs_hr_mailnotifications[]      @ignore
-  ohrm_leave_adjustment        ohrm_leave_adjustment[]
-  ohrm_leave_comment           ohrm_leave_comment[]
-  ohrm_leave_entitlement       ohrm_leave_entitlement[]
-  ohrm_leave_request_comment   ohrm_leave_request_comment[]
-  ohrm_openid_user_identity    ohrm_openid_user_identity[]    @ignore
-  ohrm_performance_tracker_log ohrm_performance_tracker_log[]
-  ohrm_timesheet_action_log    ohrm_timesheet_action_log[]
-  hs_hr_employee               hs_hr_employee?                @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_user_ibfk_1")
-  ohrm_user_role               ohrm_user_role                 @relation(fields: [user_role_id], references: [id], onUpdate: Restrict, map: "ohrm_user_ibfk_2")
+model user {
+  id                      Int                       @id @default(autoincrement())
+  user_role_id            Int
+  emp_number              Int?
+  user_name               String?                   @unique(map: "user_name") @db.VarChar(40)
+  user_password           String?                   @db.VarChar(255)
+  deleted                 Boolean                   @default(false)
+  status                  Boolean                   @default(true)
+  date_entered            DateTime?                 @db.DateTime(0)
+  date_modified           DateTime?                 @db.DateTime(0)
+  modified_user_id        Int?
+  created_by              Int?
+  mailnotifications       mailnotifications[]       @ignore
+  leave_adjustment        leave_adjustment[]
+  leave_comment           leave_comment[]
+  leave_entitlement       leave_entitlement[]
+  leave_request_comment   leave_request_comment[]
+  openid_user_identity    openid_user_identity[]    @ignore
+  performance_tracker_log performance_tracker_log[]
+  timesheet_action_log    timesheet_action_log[]
+  employee                employee?                 @relation(fields: [emp_number], references: [emp_number], onDelete: Cascade, onUpdate: Restrict, map: "user_ibfk_1")
+  user_role               user_role                 @relation(fields: [user_role_id], references: [id], onUpdate: Restrict, map: "user_ibfk_2")
 
   @@index([created_by], map: "created_by")
   @@index([emp_number], map: "emp_number")
@@ -2043,51 +2043,51 @@ model ohrm_user {
   @@index([user_role_id], map: "user_role_id")
 }
 
-model ohrm_user_role {
-  id                        Int                         @id @default(autoincrement())
-  name                      String                      @unique(map: "user_role_name") @db.VarChar(255)
-  display_name              String                      @db.VarChar(255)
-  is_assignable             Boolean?                    @default(false)
-  is_predefined             Boolean?                    @default(false)
-  ohrm_home_page            ohrm_home_page[]
-  ohrm_module_default_page  ohrm_module_default_page[]
-  ohrm_user                 ohrm_user[]
-  ohrm_user_role_data_group ohrm_user_role_data_group[]
-  ohrm_user_role_screen     ohrm_user_role_screen[]
+model user_role {
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @unique(map: "user_role_name") @db.VarChar(255)
+  display_name         String                 @db.VarChar(255)
+  is_assignable        Boolean?               @default(false)
+  is_predefined        Boolean?               @default(false)
+  home_page            home_page[]
+  module_default_page  module_default_page[]
+  user                 user[]
+  user_role_data_group user_role_data_group[]
+  user_role_screen     user_role_screen[]
 }
 
-model ohrm_user_role_data_group {
-  id              Int              @id @default(autoincrement())
-  user_role_id    Int?
-  data_group_id   Int?
-  can_read        Int?             @db.TinyInt
-  can_create      Int?             @db.TinyInt
-  can_update      Int?             @db.TinyInt
-  can_delete      Int?             @db.TinyInt
-  self            Int?             @db.TinyInt
-  ohrm_user_role  ohrm_user_role?  @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_user_role_data_group_ibfk_1")
-  ohrm_data_group ohrm_data_group? @relation(fields: [data_group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_user_role_data_group_ibfk_2")
+model user_role_data_group {
+  id            Int         @id @default(autoincrement())
+  user_role_id  Int?
+  data_group_id Int?
+  can_read      Int?        @db.TinyInt
+  can_create    Int?        @db.TinyInt
+  can_update    Int?        @db.TinyInt
+  can_delete    Int?        @db.TinyInt
+  self          Int?        @db.TinyInt
+  user_role     user_role?  @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "user_role_data_group_ibfk_1")
+  data_group    data_group? @relation(fields: [data_group_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "user_role_data_group_ibfk_2")
 
   @@index([data_group_id], map: "data_group_id")
   @@index([user_role_id], map: "user_role_id")
 }
 
-model ohrm_user_role_screen {
-  id             Int            @id @default(autoincrement())
-  user_role_id   Int
-  screen_id      Int
-  can_read       Boolean        @default(false)
-  can_create     Boolean        @default(false)
-  can_update     Boolean        @default(false)
-  can_delete     Boolean        @default(false)
-  ohrm_user_role ohrm_user_role @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_user_role_screen_ibfk_1")
-  ohrm_screen    ohrm_screen    @relation(fields: [screen_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "ohrm_user_role_screen_ibfk_2")
+model user_role_screen {
+  id           Int       @id @default(autoincrement())
+  user_role_id Int
+  screen_id    Int
+  can_read     Boolean   @default(false)
+  can_create   Boolean   @default(false)
+  can_update   Boolean   @default(false)
+  can_delete   Boolean   @default(false)
+  user_role    user_role @relation(fields: [user_role_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "user_role_screen_ibfk_1")
+  screen       screen    @relation(fields: [screen_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "user_role_screen_ibfk_2")
 
   @@index([screen_id], map: "screen_id")
   @@index([user_role_id], map: "user_role_id")
 }
 
-model ohrm_user_selection_rule {
+model user_selection_rule {
   id                   Int     @id @default(autoincrement())
   name                 String  @db.VarChar(255)
   description          String? @db.VarChar(255)
@@ -2095,32 +2095,32 @@ model ohrm_user_selection_rule {
   rule_xml_data        String? @db.Text
 }
 
-model ohrm_work_shift {
-  id                       Int                        @id @default(autoincrement())
-  name                     String                     @db.VarChar(250)
-  hours_per_day            Decimal                    @db.Decimal(4, 2)
-  start_time               DateTime                   @db.Time(0)
-  end_time                 DateTime                   @db.Time(0)
-  ohrm_employee_work_shift ohrm_employee_work_shift[]
+model work_shift {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(250)
+  hours_per_day       Decimal               @db.Decimal(4, 2)
+  start_time          DateTime              @db.Time(0)
+  end_time            DateTime              @db.Time(0)
+  employee_work_shift employee_work_shift[]
 }
 
-model ohrm_work_week {
-  id                       Int                       @id @default(autoincrement()) @db.UnsignedInt
-  operational_country_id   Int?                      @db.UnsignedInt
-  mon                      Int                       @default(0) @db.UnsignedTinyInt
-  tue                      Int                       @default(0) @db.UnsignedTinyInt
-  wed                      Int                       @default(0) @db.UnsignedTinyInt
-  thu                      Int                       @default(0) @db.UnsignedTinyInt
-  fri                      Int                       @default(0) @db.UnsignedTinyInt
-  sat                      Int                       @default(0) @db.UnsignedTinyInt
-  sun                      Int                       @default(0) @db.UnsignedTinyInt
-  ohrm_operational_country ohrm_operational_country? @relation(fields: [operational_country_id], references: [id], onDelete: Cascade, map: "fk_ohrm_work_week_ohrm_operational_country")
+model work_week {
+  id                     Int                  @id @default(autoincrement()) @db.UnsignedInt
+  operational_country_id Int?                 @db.UnsignedInt
+  mon                    Int                  @default(0) @db.UnsignedTinyInt
+  tue                    Int                  @default(0) @db.UnsignedTinyInt
+  wed                    Int                  @default(0) @db.UnsignedTinyInt
+  thu                    Int                  @default(0) @db.UnsignedTinyInt
+  fri                    Int                  @default(0) @db.UnsignedTinyInt
+  sat                    Int                  @default(0) @db.UnsignedTinyInt
+  sun                    Int                  @default(0) @db.UnsignedTinyInt
+  operational_country    operational_country? @relation(fields: [operational_country_id], references: [id], onDelete: Cascade, map: "fk_work_week_operational_country")
 
-  @@index([operational_country_id], map: "fk_ohrm_work_week_ohrm_operational_country")
+  @@index([operational_country_id], map: "fk_work_week_operational_country")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ohrm_workflow_state_machine {
+model workflow_state_machine {
   id              BigInt  @id @default(autoincrement())
   workflow        String  @db.VarChar(255)
   state           String  @db.VarChar(255)
@@ -2131,19 +2131,19 @@ model ohrm_workflow_state_machine {
   priority        Int     @default(0)
 }
 
-model ohrm_ws_consumer {
+model ws_consumer {
   app_id    Int     @id @default(autoincrement()) @db.UnsignedInt
   app_token String  @db.VarChar(10)
   app_name  String? @db.VarChar(50)
   status    Int     @default(1) @db.TinyInt
 }
 
-enum hs_hr_emp_dependents_ed_relationship_type {
+enum emp_dependents_ed_relationship_type {
   child
   other
 }
 
-enum ohrm_marketplace_addon_type {
+enum marketplace_addon_type {
   paid
   free
 }
