@@ -1,15 +1,13 @@
-version: '3.8'
-
+version: "3.8"
 services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:latest
-    container_name: mssql_container
+  sqledge:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: sqledge
     ports:
       - "1433:1433"
     environment:
-      SA_PASSWORD: griktvtwi@WSS00    # Change this to your desired password
-      ACCEPT_EULA: Y
-
-volumes:
-  mssql_data:
-    driver: local
+      - ACCEPT_EULA=1
+      - MSSQL_SA_PASSWORD=kUIJ1ttEiLtAOL23
+    cap_add:
+      - SYS_PTRACE
+    restart: unless-stopped
