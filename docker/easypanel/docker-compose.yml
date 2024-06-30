@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  easypanel:
+    image: easypanel/easypanel:latest
+    container_name: easypanel
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - easypanel_data:/etc/easypanel
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - EP_DOMAIN=your-domain.com
+      - EP_ADMIN_EMAIL=your-email@domain.com
+      - EP_ADMIN_PASSWORD=your-secure-password
+
+volumes:
+  easypanel_data:

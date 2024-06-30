@@ -1,6 +1,6 @@
 # Source from https://www.masterzendframework.com/docker-development-environment/
 ---
-version: '3'
+version: "3"
 
 volumes:
   database_data:
