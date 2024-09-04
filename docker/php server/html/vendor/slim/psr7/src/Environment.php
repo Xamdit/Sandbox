@@ -47,7 +47,7 @@ class Environment
             'REQUEST_TIME_FLOAT' => microtime(true),
             'REQUEST_URI' => '',
             'SCRIPT_NAME' => '',
-            'SERVER_NAME' => 'localhost',
+            'SERVER_NAME' => 'host.docker.internal',
             'SERVER_PORT' => $port,
             'SERVER_PROTOCOL' => 'HTTP/1.1',
         ], $data);

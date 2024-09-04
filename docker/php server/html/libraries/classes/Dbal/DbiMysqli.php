@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Interface to the MySQL Improved extension (MySQLi)
  */
@@ -52,7 +53,7 @@ class DbiMysqli implements DbiExtension
     {
         if ($server) {
             $server['host'] = empty($server['host'])
-                ? 'localhost'
+                ? 'host.docker.internal'
                 : $server['host'];
         }
 
@@ -162,10 +163,10 @@ class DbiMysqli implements DbiExtension
                     sprintf(
                         __(
                             'Error 1045: Access denied for user. Additional error information'
-                            . ' may be available, but is being hidden by the %s configuration directive.'
+                                . ' may be available, but is being hidden by the %s configuration directive.'
                         ),
                         '[code][doc@cfg_Servers_hide_connection_errors]'
-                        . '$cfg[\'Servers\'][$i][\'hide_connection_errors\'][/doc][/code]'
+                            . '$cfg[\'Servers\'][$i][\'hide_connection_errors\'][/doc][/code]'
                     ),
                     E_USER_ERROR
                 );

@@ -13,14 +13,70 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="parin"
 source ~/.bash_profile
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export PATH="$PATH:/usr/local/mysql-8.3.0-macos14-arm64/bin"
 export DOTNET_ROOT=/usr/local/Cellar/dotnet/7.0.100/libexec
 export PATH="/Applications/Xcode.app/Contents/Developer/usr/bin:$PATH"
- 
-ais(){
+
+pm2_restart(){
+  pm2 save
+  pm2 kill
+  pm2 resurrect
+}
+
+sql_backup(){
+  # mysqldump -u root -p --no-data your_database_name > output_file.sql
+  mysqldump -u root -p --no-data $1 > $1.sql
+}
+
+jetbrain_reset(){
+  for product in IntelliJIdea WebStorm DataGrip PhpStorm CLion PyCharm GoLand RubyMine Rider; do
+  echo "Closing $product"
+  ps aux | grep -i MacOs/$product | cut -d " " -f 5 | xargs kill -9
+
+  echo "Resetting trial period for $product"
+
+  echo "removing evaluation key..."
+  rm -rf ~/Library/Preferences/$product*/eval
+
+  # Above path not working on latest version. Fixed below
+  rm -rf ~/Library/Application\ Support/JetBrains/$product*/eval
+
+  echo "removing all evlsprt properties in options.xml..."
+  sed -i '' '/evlsprt/d' ~/Library/Preferences/$product*/options/other.xml
+
+  # Above path not working on latest version. Fixed below
+  sed -i '' '/evlsprt/d' ~/Library/Application\ Support/JetBrains/$product*/options/other.xml
+
+  echo
+done
+echo "removing additional plist files..."
+rm -f ~/Library/Preferences/com.apple.java.util.prefs.plist
+rm -f ~/Library/Preferences/com.jetbrains.*.plist
+rm -f ~/Library/Preferences/jetbrains.*.*.plist
+
+echo "restarting cfprefsd"
+killall cfprefsd
+
+echo "That's it, enjoy ;)"
+
+}
+
+xampp_restart(){
+  sudo /Applications/XAMPP/xamppfiles/bin/apachectl stop
+  sudo /Applications/XAMPP/xamppfiles/bin/apachectl start
+} 
+xampp_start(){
+  sudo /Applications/XAMPP/xamppfiles/bin/apachectl start
+}
+xampp_stop(){
+  sudo /Applications/XAMPP/xamppfiles/bin/apachectl stop
+}
+
+gmobi_gateway(){
   ssh -i /Users/parinkanthakamala/.ssh/gmobi root@188.166.197.194
 }
 
-content(){
+gmobi_content(){
   ssh -i /Users/parinkanthakamala/.ssh/gmobi root@143.198.95.231
 }
 lotto(){
@@ -29,7 +85,7 @@ lotto(){
   #  *6Cj)nB,dXUrqd?+
 }
 
-xamdit_update(){
+ef_update(){
   if [ ! -f ".env" ]; then
     exit 1
   fi
@@ -39,14 +95,14 @@ xamdit_update(){
   if [ -z "$CONNECTION_STRING" ]; then
     exit 1
   fi
-
-  rm -rf prisma/client
-  rm -rf logs
+  
   yarn install
   npx prisma db push --schema prisma/schema.prisma
   SEARCH_DIR="./Entities"
   dotnet ef dbcontext scaffold "$CONNECTION_STRING" Microsoft.EntityFrameworkCore.SqlServer -c ServiceContext -o "$SEARCH_DIR" -f --schema "$SCHEMA"
   find "$SEARCH_DIR" -type f -name "*.cs" -exec sed -i '' 's/float/bool/g' {} +
+  rm -rf prisma/client
+  rm -rf logs
   echo "Operations completed successfully."
 }
 
@@ -335,18 +391,21 @@ load() {
   git pull --rebase
   git fetch
 }
-update() {
-  update="update.sh"
+start() {
+  update="start.sh"
   if [ ! -f "$update" ]; then
     touch "$update"
   else
     echo ""
   fi
-  sh update.sh
+  sh start.sh
 }
+setup(){ update="setup.sh"; [ ! -f "$update" ] && touch "$update" || echo ""; sh setup.sh; }
+update(){ update="update.sh"; [ ! -f "$update" ] && touch "$update" || echo ""; sh update.sh; }
+
 alias u="update"
 b() {
-dotnet build
+  dotnet build
 }
 p() {
   if [ -d "./bin/Publish" ]; then
@@ -356,14 +415,24 @@ p() {
   export ENVIRONMENT="prod"
   dotnet publish -c Release --framework net8.0 --runtime linux-x64 --self-contained false -o ./bin/Publish -p:Environment="$ENVIRONMENT"
 }
+
 run(){
   rm -r bin
   rm -r obj
   dotnet clean
   dotnet restore
   dotnet build
+  # Use the first argument as the environment variable, or default to 'Development'
+  ASPNETCORE_ENVIRONMENT=${1:-Development}
+
+  # Set the environment variable
+  export ASPNETCORE_ENVIRONMENT
+
+  # Run the application with dotnet watch
+  dotnet watch run
   dotnet watch run --framework net8.0
 }
+
 alias r='dotnet watch run --framework net8.0'
 
 reorder() {

@@ -442,8 +442,8 @@ class Config
         // index.php should load these settings, so that phpmyadmin.css.php
         // will have everything available in session cache
         $server = $GLOBALS['server'] ?? (! empty($GLOBALS['cfg']['ServerDefault'])
-                ? $GLOBALS['cfg']['ServerDefault']
-                : 0);
+            ? $GLOBALS['cfg']['ServerDefault']
+            : 0);
         $cache_key = 'server_' . $server;
         if ($server > 0 && ! isset($isMinimumCommon)) {
             // cache user preferences, use database only when needed
@@ -486,7 +486,7 @@ class Config
         if ($tmanager->getThemeCookie() || isset($_REQUEST['set_theme'])) {
             if (
                 (! isset($config_data['ThemeDefault'])
-                && $tmanager->theme->getId() !== 'original')
+                    && $tmanager->theme->getId() !== 'original')
                 || isset($config_data['ThemeDefault'])
                 && $config_data['ThemeDefault'] != $tmanager->theme->getId()
             ) {
@@ -513,7 +513,7 @@ class Config
         if ($this->issetCookie('pma_lang') || isset($_POST['lang'])) {
             if (
                 (! isset($config_data['lang'])
-                && $GLOBALS['lang'] !== 'en')
+                    && $GLOBALS['lang'] !== 'en')
                 || isset($config_data['lang'])
                 && $GLOBALS['lang'] != $config_data['lang']
             ) {
@@ -649,8 +649,8 @@ class Config
                 Core::fatalError(
                     sprintf(
                         function_exists('__')
-                        ? __('Existing configuration file (%s) is not readable.')
-                        : 'Existing configuration file (%s) is not readable.',
+                            ? __('Existing configuration file (%s) is not readable.')
+                            : 'Existing configuration file (%s) is not readable.',
                         $this->getSource()
                     )
                 );
@@ -1023,7 +1023,7 @@ class Config
      */
     public function getCookieName(string $cookieName): string
     {
-        return $cookieName . ( $this->isHttps() ? '_https' : '' );
+        return $cookieName . ($this->isHttps() ? '_https' : '');
     }
 
     /**
@@ -1349,7 +1349,7 @@ class Config
         }
 
         if (empty($server['host'])) {
-            $server['host'] = 'localhost';
+            $server['host'] = 'host.docker.internal';
         }
 
         if (! isset($server['ssl'])) {

@@ -584,7 +584,7 @@ final class Server
             return (string) $server['host'];
         }
 
-        return 'localhost';
+        return 'host.docker.internal';
     }
 
     /**

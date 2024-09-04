@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PhpMyAdmin\Server\Status\Data class
  * Used by server_status_*.php pages
@@ -413,7 +414,7 @@ class Data
         // can be null if $cfg['ServerDefault'] = 0;
         $serverHostToLower = mb_strtolower((string) $GLOBALS['cfg']['Server']['host']);
         if (
-            $serverHostToLower === 'localhost'
+            $serverHostToLower === 'host.docker.internal'
             || $GLOBALS['cfg']['Server']['host'] === '127.0.0.1'
             || $GLOBALS['cfg']['Server']['host'] === '::1'
         ) {

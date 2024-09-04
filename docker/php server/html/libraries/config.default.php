@@ -1,4 +1,5 @@
 <?php
+
 /**
  * <code>
  * N   N  OOO  !!   DDDD   OOO    N   N  OOO  TTTTT   EEEE DDDD  I TTTTT !!
@@ -129,7 +130,7 @@ $i = 1;
  *
  * @global string $cfg['Servers'][$i]['host']
  */
-$cfg['Servers'][$i]['host'] = 'localhost';
+$cfg['Servers'][$i]['host'] = 'host.docker.internal';
 
 /**
  * MySQL port - leave blank for default port
@@ -578,8 +579,8 @@ $cfg['Servers'][$i]['tracking_version_auto_create'] = false;
  * @global string $cfg['Servers'][$i]['tracking_default_statements']
  */
 $cfg['Servers'][$i]['tracking_default_statements'] = 'CREATE TABLE,ALTER TABLE,DROP TABLE,RENAME TABLE,CREATE INDEX,' .
-      'DROP INDEX,INSERT,UPDATE,DELETE,TRUNCATE,REPLACE,CREATE VIEW,' .
-      'ALTER VIEW,DROP VIEW,CREATE DATABASE,ALTER DATABASE,DROP DATABASE';
+    'DROP INDEX,INSERT,UPDATE,DELETE,TRUNCATE,REPLACE,CREATE VIEW,' .
+    'ALTER VIEW,DROP VIEW,CREATE DATABASE,ALTER DATABASE,DROP DATABASE';
 
 /**
  * Whether a DROP VIEW IF EXISTS statement will be added
@@ -729,7 +730,7 @@ $cfg['SessionSavePath'] = '';
  *
  * @global array $cfg['MysqlSslWarningSafeHosts']
  */
-$cfg['MysqlSslWarningSafeHosts'] = ['127.0.0.1', 'localhost'];
+$cfg['MysqlSslWarningSafeHosts'] = ['127.0.0.1', 'host.docker.internal'];
 
 /**
  * maximum allocated bytes ('-1' for no limit, '0' for no change)
@@ -2245,14 +2246,14 @@ $cfg['Import']['ods_recognize_currency'] = true;
 
 /*******************************************************************************
  * Schema export defaults
-*/
+ */
 $cfg['Schema'] = [];
 
 /**
  * pdf/eps/dia/svg
  *
  * @global string $cfg['Schema']['format']
-*/
+ */
 $cfg['Schema']['format'] = 'pdf';
 
 /**

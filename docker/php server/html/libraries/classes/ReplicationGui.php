@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Functions for the replication GUI
  */
@@ -385,7 +386,7 @@ class ReplicationGui
                     mb_strrpos($currentUser, '@') + 1
                 )
             );
-            if ($userHost !== 'localhost' && $userHost !== '127.0.0.1') {
+            if ($userHost !== 'host.docker.internal' && $userHost !== '127.0.0.1') {
                 $thisHost = $userHost;
             }
         }
@@ -393,9 +394,9 @@ class ReplicationGui
         // when we start editing a user, $GLOBALS['pred_hostname'] is not defined
         if (! isset($GLOBALS['pred_hostname']) && isset($_POST['hostname'])) {
             switch (mb_strtolower($_POST['hostname'])) {
-                case 'localhost':
+                case 'host.docker.internal':
                 case '127.0.0.1':
-                    $GLOBALS['pred_hostname'] = 'localhost';
+                    $GLOBALS['pred_hostname'] = 'host.docker.internal';
                     break;
                 case '%':
                     $GLOBALS['pred_hostname'] = 'any';
@@ -436,7 +437,7 @@ class ReplicationGui
             $_SESSION['replication']['sr_action_status'] = 'error';
             $_SESSION['replication']['sr_action_info'] = __(
                 'Connection to server is disabled, please enable'
-                . ' $cfg[\'AllowArbitraryServer\'] in phpMyAdmin configuration.'
+                    . ' $cfg[\'AllowArbitraryServer\'] in phpMyAdmin configuration.'
             );
         } elseif (isset($_POST['replica_changeprimary'])) {
             $result = $this->handleRequestForReplicaChangePrimary();
@@ -473,13 +474,13 @@ class ReplicationGui
                 $response->addJSON(
                     'message',
                     $result
-                    ? Message::success($messageSuccess)
-                    : Message::error($messageError)
+                        ? Message::success($messageSuccess)
+                        : Message::error($messageError)
                 );
             } else {
                 Core::sendHeaderLocation(
                     './index.php?route=/server/replication'
-                    . Url::getCommonRaw($GLOBALS['urlParams'], '&')
+                        . Url::getCommonRaw($GLOBALS['urlParams'], '&')
                 );
             }
         }

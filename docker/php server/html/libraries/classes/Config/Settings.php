@@ -2146,7 +2146,7 @@ final class Settings
     private function setMysqlSslWarningSafeHosts(array $settings): array
     {
         if (! isset($settings['MysqlSslWarningSafeHosts']) || ! is_array($settings['MysqlSslWarningSafeHosts'])) {
-            return ['127.0.0.1', 'localhost'];
+            return ['127.0.0.1', 'host.docker.internal'];
         }
 
         $hosts = [];

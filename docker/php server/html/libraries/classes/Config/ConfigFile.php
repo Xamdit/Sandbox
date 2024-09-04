@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Config file management
  */
@@ -408,7 +409,7 @@ class ConfigFile
             $dsn .= '@';
         }
 
-        if ($this->getValue($path . '/host') !== 'localhost') {
+        if ($this->getValue($path . '/host') !== 'host.docker.internal') {
             $dsn .= $this->getValue($path . '/host');
             $port = $this->getValue($path . '/port');
             if ($port) {
@@ -441,7 +442,7 @@ class ConfigFile
 
         $host = $this->get('Servers/' . $id . '/host');
 
-        return empty($host) ? 'localhost' : $host;
+        return empty($host) ? 'host.docker.internal' : $host;
     }
 
     /**
