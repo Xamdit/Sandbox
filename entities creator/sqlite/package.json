@@ -1,0 +1,22 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "description": "My project description",
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx prettier --write \"**/*.cs\"",
+    "push": "npx prisma db push --schema prisma/schema.prisma;",
+    "pull": "npx prisma db pull --schema prisma/schema.prisma",
+    "generate": "npx prisma db pull --schema prisma/mysql.prisma",
+    "backup": "npx prisma migrate save --experimental"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-razor": "^1.0.11-alpha.1",
+    "prisma": "^6.0.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.1"
+  }
+}
